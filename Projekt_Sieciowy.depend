@@ -1,0 +1,68 @@
+# depslib dependency file v1.0
+1357941908 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\menu.rc
+
+1355750279 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\blackjack.cpp
+	<windows.h>
+	<commctrl.h>
+
+1357693140 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\blackjack_dalej.cpp
+	<windows.h>
+	<commctrl.h>
+
+1355754507 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\blackjack_main.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358179615 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\main.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358108445 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358107868 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\rankokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358176079 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1357914267 source:c:\users\user\desktop\function.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+
+1357943668 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\rejestr.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358179615 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\rejest.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358233226 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<string>
+	<iostream>
+
+1357941910 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\menu.rc
+
+1358107870 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\rankokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358179616 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\rejest.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358176080 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358108446 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+

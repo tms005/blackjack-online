@@ -1,0 +1,12 @@
+Menu_Window MENU
+{
+           POPUP "Menu"
+            {
+             MENUITEM "Start",10
+             MENUITEM "Lista sto³ów",11
+             MENUITEM "Ranking graczy",12
+             MENUITEM "Stó³ - przyk³ad",13
+             MENUITEM "Rejestracja",14
+             MENUITEM "Temp",15
+            }
+}
