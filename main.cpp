@@ -6,6 +6,7 @@
 #define SPACE ' '
 
 void parse(char [], char []);
+void zaloguj(int ID);
 
 extern int stolyWinMain();
 extern HWND stolyOkno;
@@ -86,11 +87,51 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
 
                 parse(cLogin,cPass);//skleja login z haslem oddzielajac spacja
 
-                MessageBox(0,cLogin,"Ha!",MB_OK);
-                Sleep(100);
-                MessageBox(0,cPass,"Ha!",MB_OK);
-                ShowWindow(stolyOkno,SW_SHOW);
-                ShowWindow(Okno,SW_HIDE);
+                /*
+                send();
+                recv();
+                */
+                int ID=1;//do testtow
+
+                zaloguj(ID);//funkcja do logowania
+             }
+             else if((HWND)lPar==hRejestr)
+             {
+                CHAR cLogin[20];
+                GetWindowText(hNickWpisz, cLogin, 20);
+
+                CHAR cPass[20];
+                GetWindowText(hPassWpisz, cPass, 20);
+
+                parse(cLogin,cPass);//skleja login z haslem oddzielajac spacja
+
+                /*
+                send();
+                recv();
+                */
+
+               int ID=1;//do testtow
+
+                switch(ID)
+                {
+                case 1: //konto utworzone
+                        MessageBox(0,"Konto utworzone!\nZostaniesz automatycznie zalogowany!","Ha!",MB_OK);
+                        /*
+                        send();
+                        recv();
+                        */
+                        zaloguj(ID);//automatyczne zalogowanie po utworzeniu konta
+
+                    break;
+
+                case 2: //konto istnieje
+                        MessageBox(0,"Takie konto juz istnieje!","Ha!",MB_OK);
+                    break;
+
+                default:
+                        MessageBox(0,"Wystapil nieoczekiwany blad!","Ha!",MB_OK);;
+                }
+
              }
              else if(wPar==10)
              {
@@ -137,15 +178,7 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  //ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(rejestrOkno,SW_SHOW);
              }
-             else if((HWND)lPar==hRejestr)
-             {
-                 ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
-                 ShowWindow(stolyOkno,SW_HIDE);
-                 ShowWindow(stolOkno,SW_HIDE);
-                 //ShowWindow(rejestrOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_SHOW);
-             }
+
              break;
          }
          default:
@@ -226,4 +259,27 @@ void parse(char str1[], char str2[])
 
 	 for(i=0;i<=strlen(str2);i++)
 		 str1[++hold] = str2[i];
+}
+
+void zaloguj(int ID)
+{
+    switch(ID)
+                {
+                case 1: //jestes zalogowany
+                        ShowWindow(stolyOkno,SW_SHOW);
+                        ShowWindow(Okno,SW_HIDE);
+                    break;
+
+                case 2: //serwer full
+                        MessageBox(0,"Serwer przepelniony, spróbuj póŸniej!","Ha!",MB_OK);
+                    break;
+
+                case 3: //bledne dane logowania
+                        MessageBox(0,"Niepoprawne dane, spróbuj jeszcze raz!","Ha!",MB_OK);
+                    break;
+
+                default:
+                        MessageBox(0,"Wystapil nieoczekiwany blad!","Ha!",MB_OK);;
+                }
+
 }
