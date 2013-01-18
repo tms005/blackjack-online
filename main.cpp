@@ -17,9 +17,6 @@ extern HWND rankOkno;
 extern int stolWinMain();
 extern HWND stolOkno;
 
-extern int rejestrWinMain();
-extern HWND rejestrOkno;
-
 HWND hEdit;
 CONST CHAR ClassName[]="GameWindow";
 CONST CHAR MenuName[]="Menu_Window";
@@ -66,7 +63,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              stolyWinMain();
              rankWinMain();
              stolWinMain();
-             rejestrWinMain();
              break;
          }
          case WM_DESTROY:       //polecenia dla komunikatu WM_CLOSE
@@ -139,7 +135,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(Okno,SW_SHOW);
              }
              else if(wPar==11)
@@ -148,7 +143,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  //ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_SHOW);
              }
              else if(wPar==12)
@@ -157,7 +151,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  //ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(rankOkno,SW_SHOW);
              }
              else if(wPar==13)
@@ -166,7 +159,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  //ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_SHOW);
              }
              else if(wPar==14)
@@ -176,7 +168,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  //ShowWindow(rejestrOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_SHOW);
              }
 
              break;
@@ -206,11 +197,11 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     wc.cbWndExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna utworzona z tej klasy
 
     if(RegisterClassEx(&wc)==0) return 0;
-    Okno=CreateWindowEx(0,ClassName,"BlackJack",WS_OVERLAPPEDWINDOW|WS_VISIBLE,80,50,600,500,0,0,hInst,0);
+    Okno=CreateWindowEx(0,ClassName,"CzarnyJacek",WS_OVERLAPPEDWINDOW|WS_VISIBLE,80,50,600,500,0,0,hInst,0);
 
-    hLogo=CreateWindowEx(0,"STATIC","BlackJack - Logowanie",WS_CHILD|WS_VISIBLE,250,60,150,20,Okno,0,hInst,0);
+    hLogo=CreateWindowEx(0,"STATIC","Logowanie",WS_CHILD|WS_VISIBLE,250,60,150,20,Okno,0,hInst,0);
     //SetWindowText(hlogo,"BlackJack - Logowanie");
-    hNick=CreateWindowEx(0,"STATIC","Imiê u¿ytkownika: ",WS_CHILD|WS_VISIBLE,90,110,150,20,Okno,0,hInst,0);
+    hNick=CreateWindowEx(0,"STATIC","Login: ",WS_CHILD|WS_VISIBLE,160,110,150,20,Okno,0,hInst,0);
     //SetWindowText(hnick,"Nick : ");
     hNickWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,220,110,200,20,Okno,0,hInst,0);
     hPass=CreateWindowEx(0,"STATIC","Has³o:  ",WS_CHILD|WS_VISIBLE,160,170,50,20,Okno,0,hInst,0);

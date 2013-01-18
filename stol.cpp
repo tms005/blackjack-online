@@ -10,9 +10,6 @@ extern HWND rankOkno;
 extern int stolyWinMain();
 extern HWND stolyOkno;
 
-extern int rejestrWinMain();
-extern HWND rejestrOkno;
-
 //HWND stolyhEdit;
 HWND stolOkno;
 CONST CHAR ClassName[]="StolExample";
@@ -81,7 +78,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(Okno,SW_SHOW);
              }
              else if(wPar==11)
@@ -90,7 +86,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  //ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_SHOW);
              }
              else if(wPar==12)
@@ -99,7 +94,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  //ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(rankOkno,SW_SHOW);
              }
              else if(wPar==13)
@@ -108,7 +102,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  //ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_SHOW);
              }
              else if(wPar==14)
@@ -117,8 +110,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 //ShowWindow(rejestrOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_SHOW);
              }
              break;
          }

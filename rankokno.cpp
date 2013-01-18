@@ -10,9 +10,6 @@ extern HWND stolyOkno;
 extern int stolWinMain();
 extern HWND stolOkno;
 
-extern int rejestrWinMain();
-extern HWND rejestrOkno;
-
 //HWND rankhEdit;
 HWND rankOkno;
 CONST CHAR ClassName[]="Ranking";
@@ -64,7 +61,6 @@ LRESULT CALLBACK rankWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(Okno,SW_SHOW);
              }
              else if(wPar==11)
@@ -73,7 +69,6 @@ LRESULT CALLBACK rankWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  //ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_SHOW);
              }
              else if(wPar==12)
@@ -82,7 +77,6 @@ LRESULT CALLBACK rankWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  //ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(rankOkno,SW_SHOW);
              }
              else if(wPar==13)
@@ -91,7 +85,6 @@ LRESULT CALLBACK rankWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  //ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_SHOW);
              }
              else if(wPar==14)
@@ -100,8 +93,6 @@ LRESULT CALLBACK rankWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 //ShowWindow(rejestrOkno,SW_HIDE);
-                 ShowWindow(rejestrOkno,SW_SHOW);
              }
              break;
          }
@@ -135,6 +126,9 @@ int WINAPI rankWinMain ()
     //UpdateWindow(dalej_Okno);
 
     hListRank= CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 40, 30, 500, 300, rankOkno, NULL, hInstMain, NULL);
+
+
+
     SendMessage(hListRank, LB_ADDSTRING, 0, (LPARAM)"rank 1");
     SendMessage(hListRank, LB_ADDSTRING, 0, (LPARAM)"rank 2");
     SendMessage(hListRank, LB_ADDSTRING, 0, (LPARAM)"rank 3");
