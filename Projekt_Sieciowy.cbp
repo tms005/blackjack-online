@@ -35,7 +35,6 @@
 		<Unit filename="menu.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="rankokno.cpp" />
 		<Unit filename="stol.cpp" />
 		<Unit filename="stolyokno.cpp" />
 		<Extensions>

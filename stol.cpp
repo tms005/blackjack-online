@@ -4,9 +4,6 @@
 extern HINSTANCE hInstMain;
 extern HWND Okno;
 
-extern int rankWinMain();
-extern HWND rankOkno;
-
 extern int stolyWinMain();
 extern HWND stolyOkno;
 
@@ -75,7 +72,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              if(wPar==10)
              {
                  //ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(Okno,SW_SHOW);
@@ -83,7 +79,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==11)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  //ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_SHOW);
@@ -91,15 +86,12 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==12)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 //ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_SHOW);
              }
              else if(wPar==13)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  //ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_SHOW);
@@ -107,7 +99,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==14)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
              }

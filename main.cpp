@@ -11,9 +11,6 @@ void zaloguj(int ID);
 extern int stolyWinMain();
 extern HWND stolyOkno;
 
-extern int rankWinMain();
-extern HWND rankOkno;
-
 extern int stolWinMain();
 extern HWND stolOkno;
 
@@ -61,7 +58,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          case WM_CREATE:
          {
              stolyWinMain();
-             rankWinMain();
              stolWinMain();
              break;
          }
@@ -77,37 +73,28 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              {
                 CHAR cLogin[20];
                 GetWindowText(hNickWpisz, cLogin, 20);
-
                 CHAR cPass[20];
                 GetWindowText(hPassWpisz, cPass, 20);
-
                 parse(cLogin,cPass);//skleja login z haslem oddzielajac spacja
-
                 /*
                 send();
                 recv();
                 */
                 int ID=1;//do testtow
-
                 zaloguj(ID);//funkcja do logowania
              }
              else if((HWND)lPar==hRejestr)
              {
                 CHAR cLogin[20];
                 GetWindowText(hNickWpisz, cLogin, 20);
-
                 CHAR cPass[20];
                 GetWindowText(hPassWpisz, cPass, 20);
-
                 parse(cLogin,cPass);//skleja login z haslem oddzielajac spacja
-
                 /*
                 send();
                 recv();
                 */
-
                int ID=1;//do testtow
-
                 switch(ID)
                 {
                 case 1: //konto utworzone
@@ -117,22 +104,18 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                         recv();
                         */
                         zaloguj(ID);//automatyczne zalogowanie po utworzeniu konta
-
                     break;
 
                 case 2: //konto istnieje
                         MessageBox(0,"Takie konto juz istnieje!","Ha!",MB_OK);
                     break;
-
                 default:
                         MessageBox(0,"Wystapil nieoczekiwany blad!","Ha!",MB_OK);;
                 }
-
              }
              else if(wPar==10)
              {
                  //ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(Okno,SW_SHOW);
@@ -140,7 +123,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==11)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  //ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_SHOW);
@@ -148,15 +130,12 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==12)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 //ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_SHOW);
              }
              else if(wPar==13)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  //ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_SHOW);
@@ -164,7 +143,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==14)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  //ShowWindow(rejestrOkno,SW_HIDE);
@@ -272,5 +250,4 @@ void zaloguj(int ID)
                 default:
                         MessageBox(0,"Wystapil nieoczekiwany blad!","Ha!",MB_OK);;
                 }
-
 }

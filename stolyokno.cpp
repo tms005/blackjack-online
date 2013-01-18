@@ -3,15 +3,9 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
-#define SPACE ' '
-
-void sklej(char str1[], char str2[]);
 
 extern HINSTANCE hInstMain;
 extern HWND Okno;
-
-extern int rankWinMain();
-extern HWND rankOkno;
 
 extern int stolWinMain();
 extern HWND stolOkno;
@@ -40,6 +34,9 @@ HWND hlRanking;
 HWND hlChat;
 HWND hlRankingPkt;
 HWND hlStoly;
+
+void wyswietlListe(HWND hLista, int iKey);//pobiera odpowiednia liste poprzez iKey i wkleja do odpowiedniego hwnd
+void dodajenter(char str1[]);
 /*
 
 HWND CreateWindowEx
@@ -80,10 +77,9 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          {
              if((HWND)lPar==hStolyWyslij)
              {
-                CHAR cChat[255];
-                CHAR cEnter[255]="\r\n";
-                GetWindowText(hStolyMail, cChat, 255);
-                sklej(cChat,cEnter);
+                CHAR cChat[256];
+                GetWindowText(hStolyMail, cChat, 256);
+                dodajenter(cChat);
                 /*
                 send();
                 recv();
@@ -95,7 +91,6 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==10)
              {
                  //ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(Okno,SW_SHOW);
@@ -103,7 +98,6 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==11)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  //ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_SHOW);
@@ -111,15 +105,12 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==12)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 //ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_SHOW);
              }
              else if(wPar==13)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  //ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_SHOW);
@@ -127,7 +118,6 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==14)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(rankOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
              }
@@ -172,56 +162,59 @@ int WINAPI stolyWinMain ()
 
     hlRanking=CreateWindowEx(0,"STATIC","Top 10",WS_CHILD|WS_VISIBLE,260,10,50,20,stolyOkno,0,hInstMain,0);
     hListRanking = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 220, 30, 125, 180, stolyOkno, NULL, hInstMain, NULL);
-    SendMessage(hListRanking, LB_ADDSTRING, 0, (LPARAM)"szesnascieznakow");
+    wyswietlListe(hListRanking,1);
 
     hlRankingPkt=CreateWindowEx(0,"STATIC","Pkt",WS_CHILD|WS_VISIBLE,360,10,50,20,stolyOkno,0,hInstMain,0);
     hListRankingPkt = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 345, 30, 50, 180, stolyOkno, NULL, hInstMain, NULL);
-    SendMessage(hListRankingPkt, LB_ADDSTRING, 0, (LPARAM)"10000");
+    wyswietlListe(hListRankingPkt,2);
 
     hDolacz=CreateWindowEx(0,"BUTTON","Do³¹cz",WS_CHILD|WS_VISIBLE,25,205,75,20,stolyOkno,0,hInstMain,0);
     hUtworz=CreateWindowEx(0,"BUTTON","Utwórz",WS_CHILD|WS_VISIBLE,110,205,75,20,stolyOkno,0,hInstMain,0);
 
     hlOnline=CreateWindowEx(0,"STATIC","Online",WS_CHILD|WS_VISIBLE,470,10,50,20,stolyOkno,0,hInstMain,0);
-    hListGraczy = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 425, 30, 140, 360, stolyOkno, NULL, hInstMain, NULL);
-
-    char cChar[256] = "janusz zoska wakus homus janusz zoska wakus homus janusz zoska wakus homus ";//dla testow
-    char cNick[256];
-    memset(cNick, 0, 256);
-    /*
-    send();
-    recv();
-    */
-    int hold,dn=0;
-    hold = strlen(cChar);
-    for(int d = 0;d<hold;d++){
-        if(cChar[d]!=' ') {
-                cNick[dn]=cChar[d];
-                dn++;
-            }
-        else {
-                SendMessage(hListGraczy, LB_ADDSTRING, 0, (LPARAM)cNick);
-                memset(cNick, 0, 256);
-                dn=0;
-            }
-    }
+    hListGraczy = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL,WS_VSCROLL|WS_CHILD|WS_VISIBLE|WS_BORDER, 425, 30, 140, 360, stolyOkno, NULL, hInstMain, NULL);
+    wyswietlListe(hListGraczy,3);
 
     hStolyWyloguj=CreateWindowEx(0,"BUTTON","Wyloguj",WS_CHILD|WS_VISIBLE,455,400,75,20,stolyOkno,0,hInstMain,0);
 
     hlChat=CreateWindowEx(0,"STATIC","Czat",WS_CHILD|WS_VISIBLE,50,240,50,20,stolyOkno,0,hInstMain,0);
-    hStolyChat=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,ES_MULTILINE|WS_CHILD|WS_VISIBLE,20,260,375,130,stolyOkno,0,hInstMain,0);
+    hStolyChat=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_CHILD|WS_VISIBLE,20,260,375,130,stolyOkno,0,hInstMain,0);
     hStolyMail=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,20,400,290,20,stolyOkno,0,hInstMain,0);
     hStolyWyslij=CreateWindowEx(0,"BUTTON","Wyœlij",WS_CHILD|WS_VISIBLE,320,400,75,20,stolyOkno,0,hInstMain,0);
 
     return 0;
 }
 
-void sklej(char str1[], char str2[])
+
+void wyswietlListe(HWND hLista,int iKey)
 {
+    char cChar[256] = "janusz zoska wakus homus janusz zoska wakus homus janusz zoska wakus homus ";//dla testow
+    /*
+    send();
+    recv();
+    */
+    char cWyraz[256];
+    memset(cWyraz, 0, 256);
+    int hold,dn=0;
+    hold = strlen(cChar);
+    for(int d = 0;d<hold;d++){
+        if(cChar[d]!=' ') {
+                cWyraz[dn]=cChar[d];
+                dn++;
+            }
+        else {
+                SendMessage(hLista, LB_ADDSTRING, 0, (LPARAM)cWyraz);
+                memset(cWyraz, 0, 256);
+                dn=0;
+            }
+    }
+}
+
+void dodajenter(char str1[])
+{
+     CHAR cEnter[256]="\r\n";
      int i, hold;
      hold = strlen(str1);
-
-      str1[hold] = SPACE;
-
-	 for(i=0;i<=strlen(str2);i++)
-		 str1[++hold] = str2[i];
+	 for(i=0;i<=strlen(cEnter);i++)
+		 str1[hold++] = cEnter[i];
 }
