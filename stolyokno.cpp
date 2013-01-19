@@ -88,6 +88,12 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 SetWindowText(hStolyMail,"");
                 SetFocus(hStolyMail);
              }
+             else if((HWND)lPar==hStolyWyloguj)
+             {
+                ShowWindow(Okno,SW_SHOW);
+                ShowWindow(stolyOkno,SW_HIDE);
+                UpdateWindow(Okno);
+             }
              else if(wPar==10)
              {
                  //ShowWindow(Okno,SW_HIDE);
@@ -213,7 +219,7 @@ void wyswietlListe(HWND hLista,int iKey)
 void dodajenter(char str1[])
 {
      CHAR cEnter[256]="\r\n";
-     int i, hold;
+     unsigned int i, hold;
      hold = strlen(str1);
 	 for(i=0;i<=strlen(cEnter);i++)
 		 str1[hold++] = cEnter[i];

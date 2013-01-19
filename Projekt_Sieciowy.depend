@@ -94,18 +94,18 @@
 	<windows.h>
 	<commctrl.h>
 
-1358539291 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\stol.cpp
+1358584014 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\stol.cpp
 	<windows.h>
 	<commctrl.h>
 
-1358544777 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\stolyokno.cpp
+1358588123 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\stolyokno.cpp
 	<windows.h>
 	<commctrl.h>
 	<iostream>
 	<stdlib.h>
 	<string.h>
 
-1358540670 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\main.cpp
+1358587627 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\main.cpp
 	<windows.h>
 	<commctrl.h>
 	<iostream>

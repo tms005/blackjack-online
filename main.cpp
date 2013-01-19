@@ -5,7 +5,7 @@
 #include <string.h>
 #define SPACE ' '
 
-void parse(char [], char []);
+void sklej(char [], char []);
 void zaloguj(int ID);
 
 extern int stolyWinMain();
@@ -75,7 +75,7 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 GetWindowText(hNickWpisz, cLogin, 20);
                 CHAR cPass[20];
                 GetWindowText(hPassWpisz, cPass, 20);
-                parse(cLogin,cPass);//skleja login z haslem oddzielajac spacja
+                sklej(cLogin,cPass);//skleja login z haslem oddzielajac spacja
                 /*
                 send();
                 recv();
@@ -89,7 +89,7 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 GetWindowText(hNickWpisz, cLogin, 20);
                 CHAR cPass[20];
                 GetWindowText(hPassWpisz, cPass, 20);
-                parse(cLogin,cPass);//skleja login z haslem oddzielajac spacja
+                sklej(cLogin,cPass);//skleja login z haslem oddzielajac spacja
                 /*
                 send();
                 recv();
@@ -147,7 +147,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(stolOkno,SW_HIDE);
                  //ShowWindow(rejestrOkno,SW_HIDE);
              }
-
              break;
          }
          default:
@@ -177,7 +176,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     if(RegisterClassEx(&wc)==0) return 0;
     Okno=CreateWindowEx(0,ClassName,"CzarnyJacek",WS_OVERLAPPEDWINDOW|WS_VISIBLE,80,50,600,500,0,0,hInst,0);
 
-    hLogo=CreateWindowEx(0,"STATIC","Logowanie",WS_CHILD|WS_VISIBLE,250,60,150,20,Okno,0,hInst,0);
+    hLogo=CreateWindowEx(0,"STATIC","Logowanie",WS_CHILD|WS_VISIBLE,280,60,150,20,Okno,0,hInst,0);
     //SetWindowText(hlogo,"BlackJack - Logowanie");
     hNick=CreateWindowEx(0,"STATIC","Login: ",WS_CHILD|WS_VISIBLE,160,110,150,20,Okno,0,hInst,0);
     //SetWindowText(hnick,"Nick : ");
@@ -185,7 +184,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     hPass=CreateWindowEx(0,"STATIC","Has³o:  ",WS_CHILD|WS_VISIBLE,160,170,50,20,Okno,0,hInst,0);
     //SetWindowText(hpass,"Has³o : ");
     hPassWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE|ES_PASSWORD,220,170,200,20,Okno,0,hInst,0);
-    hLogin=CreateWindowEx(0,"BUTTON","Logowanie",WS_CHILD|WS_VISIBLE,265,230,100,25,Okno,0,hInst,0);
+    hLogin=CreateWindowEx(0,"BUTTON","Logowanie",WS_CHILD|WS_VISIBLE,265,230,100,20,Okno,0,hInst,0);
     hRejestr = CreateWindowEx(0,"BUTTON","Rejestracja",WS_VISIBLE|WS_CHILD,265,270,100,20,Okno,0,hInst,0);
     //SetWindowText(hRejestr,"Rejestracja");
     //ShowWindow(Okno,nShow);
@@ -206,7 +205,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
 
     if ( connect(sock, (sockaddr*)&saddr, sizeof(sockaddr)) == SOCKET_ERROR )
     {
-        /* po³¹czenie siê nie powiod³o
+         po³¹czenie siê nie powiod³o
         sock = NULL;
         return -1;
     }*/
@@ -219,9 +218,9 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     return msgs.wParam;
 }
 
-void parse(char str1[], char str2[])
+void sklej(char str1[], char str2[])
 {
-     int i, hold;
+     unsigned int i, hold;
      hold = strlen(str1);
 
       str1[hold] = SPACE;
@@ -237,6 +236,7 @@ void zaloguj(int ID)
                 case 1: //jestes zalogowany
                         ShowWindow(stolyOkno,SW_SHOW);
                         ShowWindow(Okno,SW_HIDE);
+                        UpdateWindow(stolyOkno);
                     break;
 
                 case 2: //serwer full
