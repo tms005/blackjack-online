@@ -36,6 +36,11 @@ HWND hListGraczyOn;
 
 HWND hStolWyloguj;
 
+/////////////////////////////////////////////////////////deklaracje////////////////////////////////////////////
+void wyswietlListe(HWND hLista, int iKey);//pobiera odpowiednia liste poprzez iKey i wkleja do odpowiedniego hwnd
+void dodajEnter(char str1[]);
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /*
 
 HWND CreateWindowEx
@@ -74,7 +79,20 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          }
          case WM_COMMAND:
          {
-             if(wPar==10)
+             if((HWND)lPar==hStolWyslij)
+             {
+                CHAR cChat[256];
+                GetWindowText(hStolMail, cChat, 256);
+                dodajEnter(cChat);
+                /*
+                send();////////////////wysyla wiadomosc
+                recv();////////////////odbiera wiadomosc z dopisanym loginem usera
+                */
+                SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cChat) );
+                SetWindowText(hStolMail,"");
+                SetFocus(hStolMail);
+             }
+             else if(wPar==10)
              {
                  //ShowWindow(Okno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
@@ -186,17 +204,12 @@ int WINAPI stolWinMain ()
     hStoj=CreateWindowEx(0,"BUTTON","stop",WS_CHILD|WS_VISIBLE,220,240,60,20,stol,0,hInstMain,0);
 
     hListGraczyOn = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 405, 30, 147, 201, stolOkno, NULL, hInstMain, NULL);
-    //if(online)
-    //{
-        SendMessage(hListGraczyOn, LB_ADDSTRING, 0, (LPARAM)"GraczOn 1");
-        SendMessage(hListGraczyOn, LB_ADDSTRING, 0, (LPARAM)"GraczOn 2");
-        SendMessage(hListGraczyOn, LB_ADDSTRING, 0, (LPARAM)"GraczOn 3");
-    //}
+    wyswietlListe(hListGraczyOn,4);
 
     hWstan=CreateWindowEx(0,"BUTTON","Wstan",WS_CHILD|WS_VISIBLE,442,242,75,20,stolOkno,0,hInstMain,0);
     hOpuscStolik=CreateWindowEx(0,"BUTTON","Opusc Stolik",WS_CHILD|WS_VISIBLE,430,272,100,20,stolOkno,0,hInstMain,0);
 
-    hStolChat=CreateWindowEx(WS_EX_CLIENTEDGE,"STATIC",0,WS_CHILD|WS_VISIBLE|WS_DISABLED,40,330,510,101,stolOkno,0,hInstMain,0); // 341
+    hStolChat=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_DISABLED|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_CHILD|WS_VISIBLE,40,330,510,101,stolOkno,0,hInstMain,0); // 341
     hStolMail=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,40,441,261,20,stolOkno,0,hInstMain,0);
     hStolWyslij=CreateWindowEx(0,"BUTTON","Wyœlij",WS_CHILD|WS_VISIBLE,320,441,61,20,stolOkno,0,hInstMain,0);
 

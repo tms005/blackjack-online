@@ -3,10 +3,8 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
-#define SPACE ' '
 
-void sklej(char [], char []);
-void zaloguj(int ID);
+#include "funkcje.h"
 
 extern int stolyWinMain();
 extern HWND stolyOkno;
@@ -30,6 +28,11 @@ HWND hPassWpisz;
 HWND hLogin;
 
 HWND hRejestr;
+
+/////////////////tutaj umieszczamy deklaracje funkcji bo niektore korzystaja z deklaracji hwnd///////////////////
+void zaloguj(int iKey);
+void rejestruj(int iKey);
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
 
@@ -71,47 +74,39 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          {
              if((HWND)lPar==hLogin)
              {
+                EnableWindow(hLogin, false);
+                EnableWindow(hRejestr, false);
                 CHAR cLogin[20];
                 GetWindowText(hNickWpisz, cLogin, 20);
                 CHAR cPass[20];
                 GetWindowText(hPassWpisz, cPass, 20);
-                sklej(cLogin,cPass);//skleja login z haslem oddzielajac spacja
+                sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
                 /*
                 send();
                 recv();
                 */
-                int ID=1;//do testtow
-                zaloguj(ID);//funkcja do logowania
+                int iKey=1;//do testtow
+                zaloguj(iKey);//funkcja do logowania
+                EnableWindow(hLogin, true);
+                EnableWindow(hRejestr, true);
              }
              else if((HWND)lPar==hRejestr)
              {
+                EnableWindow(hLogin, false);
+                EnableWindow(hRejestr, false);
                 CHAR cLogin[20];
                 GetWindowText(hNickWpisz, cLogin, 20);
                 CHAR cPass[20];
                 GetWindowText(hPassWpisz, cPass, 20);
-                sklej(cLogin,cPass);//skleja login z haslem oddzielajac spacja
+                sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
                 /*
                 send();
                 recv();
                 */
-               int ID=1;//do testtow
-                switch(ID)
-                {
-                case 1: //konto utworzone
-                        MessageBox(0,"Konto utworzone!\nZostaniesz automatycznie zalogowany!","Ha!",MB_OK);
-                        /*
-                        send();
-                        recv();
-                        */
-                        zaloguj(ID);//automatyczne zalogowanie po utworzeniu konta
-                    break;
-
-                case 2: //konto istnieje
-                        MessageBox(0,"Takie konto juz istnieje!","Ha!",MB_OK);
-                    break;
-                default:
-                        MessageBox(0,"Wystapil nieoczekiwany blad!","Ha!",MB_OK);;
-                }
+               int iKey=1;//do testtow
+               rejestruj(iKey);//funkcja do rejestracji
+               EnableWindow(hLogin, true);
+               EnableWindow(hRejestr, true);
              }
              else if(wPar==10)
              {
@@ -218,20 +213,9 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     return msgs.wParam;
 }
 
-void sklej(char str1[], char str2[])
+void zaloguj(int iKey)
 {
-     unsigned int i, hold;
-     hold = strlen(str1);
-
-      str1[hold] = SPACE;
-
-	 for(i=0;i<=strlen(str2);i++)
-		 str1[++hold] = str2[i];
-}
-
-void zaloguj(int ID)
-{
-    switch(ID)
+    switch(iKey)
                 {
                 case 1: //jestes zalogowany
                         ShowWindow(stolyOkno,SW_SHOW);
@@ -247,6 +231,27 @@ void zaloguj(int ID)
                         MessageBox(0,"Niepoprawne dane, spróbuj jeszcze raz!","Ha!",MB_OK);
                     break;
 
+                default:
+                        MessageBox(0,"Wystapil nieoczekiwany blad!","Ha!",MB_OK);;
+                }
+}
+
+void rejestruj(int iKey)
+{
+    switch(iKey)
+                {
+                case 1: //konto utworzone
+                        MessageBox(0,"Konto utworzone!\nZostaniesz automatycznie zalogowany!","Ha!",MB_OK);
+                        /*
+                        send();
+                        recv();
+                        */
+                        zaloguj(iKey);//automatyczne zalogowanie po utworzeniu konta
+                    break;
+
+                case 2: //konto istnieje
+                        MessageBox(0,"Takie konto juz istnieje!","Ha!",MB_OK);
+                    break;
                 default:
                         MessageBox(0,"Wystapil nieoczekiwany blad!","Ha!",MB_OK);;
                 }
