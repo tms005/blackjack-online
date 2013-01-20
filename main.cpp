@@ -3,6 +3,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#pragma comment (lib, "Ws2_32.lib")
 
 #include "funkcje.h"
 
@@ -16,7 +17,7 @@ HWND hEdit;
 CONST CHAR ClassName[]="GameWindow";
 CONST CHAR MenuName[]="Menu_Window";
 
-MSG msgs; //struktura na komunikatów
+MSG msgs; //struktura na komunikatÃ³w
 HINSTANCE hInstMain;
 
 HWND Okno;
@@ -39,17 +40,17 @@ void rejestruj(int iKey);
 HWND CreateWindowEx
 (
    DWORD dwExStyle,                 //rozszerzony styl okna
-   LPCTSTR lpClassName,             //nazwa klasy okna do jakiej ma nale¿eæ okno
-   LPCTSTR lpWindowName,            //tytu³ okna, bêdzie wyœwietlany na pasku tytu³u
+   LPCTSTR lpClassName,             //nazwa klasy okna do jakiej ma naleÂ¿eÃ¦ okno
+   LPCTSTR lpWindowName,            //tytuÂ³ okna, bÃªdzie wyÅwietlany na pasku tytuÂ³u
    DWORD dwStyle,                   //podstawowy styl okna
-   INT x,                           //wspó³rzêdna x okna w pikselach
-   INT y,                           //wspó³rzêdna y okna w pikselach
-   INT nWidth,                      //szerokoœæ okna w pikselach
-   INT nHeight,                     //wysokoœæ okna w pikselach
-   HWND hWndParent,                 //uchwyt okna rodzica, ma byæ to g³ówne okno, naszym rodzicem bêdzie pulpit, wiêc podajemy 0
+   INT x,                           //wspÃ³Â³rzÃªdna x okna w pikselach
+   INT y,                           //wspÃ³Â³rzÃªdna y okna w pikselach
+   INT nWidth,                      //szerokoÅÃ¦ okna w pikselach
+   INT nHeight,                     //wysokoÅÃ¦ okna w pikselach
+   HWND hWndParent,                 //uchwyt okna rodzica, ma byÃ¦ to gÂ³Ã³wne okno, naszym rodzicem bÃªdzie pulpit, wiÃªc podajemy 0
    HMENU hMenu,                     //uchwyt do menu okna
-   HINSTANCE hInstance,             //uchwyt procesu do którego ma nale¿eæ nasze okno, podajemy tu uchwyt swojego programu
-   LPVOID lpParam                   //wskaŸnik na dodatkowe informacje, które zostan¹ przekazane z komunikatem tworz¹cym okno
+   HINSTANCE hInstance,             //uchwyt procesu do ktÃ³rego ma naleÂ¿eÃ¦ nasze okno, podajemy tu uchwyt swojego programu
+   LPVOID lpParam                   //wskaÅ¸nik na dodatkowe informacje, ktÃ³re zostanÂ¹ przekazane z komunikatem tworzÂ¹cym okno
 );
 
 */
@@ -145,7 +146,7 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              break;
          }
          default:
-         return DefWindowProc(hwnd,msg,wPar,lPar);       //domyœlna obs³uga reszty komunikatów
+         return DefWindowProc(hwnd,msg,wPar,lPar);       //domyÅlna obsÂ³uga reszty komunikatÃ³w
         }
         return 0;
 }
@@ -159,14 +160,14 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     wc.lpszClassName = ClassName;                                 //nazwa klasy. przekazanie globalne.
     wc.lpfnWndProc = WndProc;                                     //
     wc.style = 0;                                                 //
-    wc.cbSize = sizeof (WNDCLASSEX);                              //rozmiar klasy w bajtach w pamiêci
+    wc.cbSize = sizeof (WNDCLASSEX);                              //rozmiar klasy w bajtach w pamiÃªci
     wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);                  //uchwyt ikony okna
-    wc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);                //uchwyt ma³ej ikony okna
-    wc.hCursor = LoadCursor (NULL, IDC_ARROW);                    //uchwyt kursora - s³u¿y do za³adowania kursora tzw. "strza³ki"
+    wc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);                //uchwyt maÂ³ej ikony okna
+    wc.hCursor = LoadCursor (NULL, IDC_ARROW);                    //uchwyt kursora - sÂ³uÂ¿y do zaÂ³adowania kursora tzw. "strzaÂ³ki"
     wc.lpszMenuName = "";                                          //nazwa menu
-    wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 0);               //uchwyt do "pêdzla" z t³em
-    wc.cbClsExtra = 0;                                            //dodatkowa pamiêæ dla okna klasy
-    wc.cbWndExtra = 0;                                            //dodatkowa pamiêæ dla okna utworzona z tej klasy
+    wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 0);               //uchwyt do "pÃªdzla" z tÂ³em
+    wc.cbClsExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna klasy
+    wc.cbWndExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna utworzona z tej klasy
 
     if(RegisterClassEx(&wc)==0) return 0;
     Okno=CreateWindowEx(0,ClassName,"CzarnyJacek",WS_OVERLAPPEDWINDOW|WS_VISIBLE,80,50,600,500,0,0,hInst,0);
@@ -176,41 +177,64 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     hNick=CreateWindowEx(0,"STATIC","Login: ",WS_CHILD|WS_VISIBLE,160,110,150,20,Okno,0,hInst,0);
     //SetWindowText(hnick,"Nick : ");
     hNickWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,220,110,200,20,Okno,0,hInst,0);
-    hPass=CreateWindowEx(0,"STATIC","Has�o:  ",WS_CHILD|WS_VISIBLE,160,170,50,20,Okno,0,hInst,0);
-    //SetWindowText(hpass,"Has�o : ");
+    hPass=CreateWindowEx(0,"STATIC","Has³o:  ",WS_CHILD|WS_VISIBLE,160,170,50,20,Okno,0,hInst,0);
+    //SetWindowText(hpass,"Has³o : ");
     hPassWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE|ES_PASSWORD,220,170,200,20,Okno,0,hInst,0);
     hLogin=CreateWindowEx(0,"BUTTON","Logowanie",WS_CHILD|WS_VISIBLE,265,230,100,20,Okno,0,hInst,0);
     hRejestr = CreateWindowEx(0,"BUTTON","Rejestracja",WS_VISIBLE|WS_CHILD,265,270,100,20,Okno,0,hInst,0);
     //SetWindowText(hRejestr,"Rejestracja");
     //ShowWindow(Okno,nShow);
 
-    /*WSADATA wsaData;
+    /*
+    //laczenie z serwerem
+    Buffer sbuffer;
+    int RetVal = 0;
+        WSAData wsaData;
+        WORD DllVersion = MAKEWORD(2,1);
+        RetVal = WSAStartup(DllVersion, &wsaData);
+        if(RetVal != 0)
+        {
+                MessageBoxA(NULL, "Winsock startup failed", "Error", MB_OK | MB_ICONERROR);
+                exit(1);
+        }
+
     SOCKADDR_IN saddr;
     SOCKET      sock;
-    char        *http_req = "";
-    char        index[1024*20] = { 0 };
-
-    WSAStartup( MAKEWORD(2,2), &amp;amp;wsaData );
-
-    sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-    saddr.sin_addr.S_un.S_addr = resolveHost ("");
-    saddr.sin_family = AF_INET;
-    saddr.sin_port = htons(80);
+        sock = socket(AF_INET, SOCK_STREAM, 0);
+        saddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+        saddr.sin_port        = htons(27015);
+        saddr.sin_family      = AF_INET;
 
     if ( connect(sock, (sockaddr*)&saddr, sizeof(sockaddr)) == SOCKET_ERROR )
     {
-         po��czenie si� nie powiod�o
-        sock = NULL;
+        cout<<"Błąd połączenia z serverem";
+        sock = 0;
         return -1;
-    }*/
+    }
 
-    while(GetMessage(&msgs,0,0,0)) //pêtla obs³uguj¹ca wymianê komunikatów
+    char pakiet[512]= {0};*/
+
+    while(GetMessage(&msgs,0,0,0)) //pÃªtla obsÂ³ugujÂ¹ca wymianÃª komunikatÃ³w
     {
-                                   TranslateMessage(&msgs); //funkcja t³umacz¹ca sygna³y z klawiatury na odpowiednie komunikaty systemowe
-                                   DispatchMessage(&msgs); //funkcja przetwarzaj¹ca komunikaty systemowe przez procedury obs³ugi
+                                   TranslateMessage(&msgs); //funkcja tÂ³umaczÂ¹ca sygnaÂ³y z klawiatury na odpowiednie komunikaty systemowe
+                                   DispatchMessage(&msgs); //funkcja przetwarzajÂ¹ca komunikaty systemowe przez procedury obsÂ³ugi
     }
     return msgs.wParam;
+    
+    
+    
+    
+ //Przed wyslaniem i po odebraniu uzywamy pack i unpack 
+ // pack(sbuffer,pakiet);
+ // sbuffer=unpack(pakiet);
+  
+  //Wyglad senda i recv  
+  //  send(sock,pakiet,sizeof(pakiet),0);
+  //  recv(sock,pakiet,sizeof(pakiet),0);
+
+
+  //  closesocket(sock);
+  //  WSACleanup();
 }
 
 void zaloguj(int iKey)
@@ -224,11 +248,11 @@ void zaloguj(int iKey)
                     break;
 
                 case 2: //serwer full
-                        MessageBox(0,"Serwer przepelniony, spr�buj p�niej!","Ha!",MB_OK);
+                        MessageBox(0,"Serwer przepelniony, spróbuj póniej!","Ha!",MB_OK);
                     break;
 
                 case 3: //bledne dane logowania
-                        MessageBox(0,"Niepoprawne dane, spr�buj jeszcze raz!","Ha!",MB_OK);
+                        MessageBox(0,"Niepoprawne dane, spróbuj jeszcze raz!","Ha!",MB_OK);
                     break;
 
                 default:
