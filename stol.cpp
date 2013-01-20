@@ -36,10 +36,8 @@ HWND hListGraczyOn;
 
 HWND hStolWyloguj;
 
-/////////////////////////////////////////////////////////deklaracje////////////////////////////////////////////
 void wyswietlListe(HWND hLista, int iKey);//pobiera odpowiednia liste poprzez iKey i wkleja do odpowiedniego hwnd
 void dodajEnter(char str1[]);
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
 
@@ -79,7 +77,33 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          }
          case WM_COMMAND:
          {
-             if((HWND)lPar==hStolWyslij)
+             if((HWND)lPar==hDobierz)
+             {
+                // funkcja dobierania
+             }
+             else if((HWND)lPar==hPodwoj)
+             {
+                    // funkcja podwajania stawki
+             }
+             else if((HWND)lPar==hStoj)
+             {
+                    // funkcja rezygnacji z rozgrywki
+             }
+             else if((HWND)lPar==hOpuscStolik)
+             {
+                    // funkcja odejscia od stolu.
+                    ShowWindow(stolyOkno,SW_SHOW);
+                    ShowWindow(stolOkno,SW_HIDE);
+                    UpdateWindow(stolyOkno);
+             }
+             else if((HWND)lPar==hStolWyloguj)
+             {
+                    // funkcja wylogowania
+                    ShowWindow(Okno,SW_SHOW);
+                    ShowWindow(stolOkno,SW_HIDE);
+                    UpdateWindow(Okno);
+             }
+             else if((HWND)lPar==hStolWyslij)
              {
                 CHAR cChat[256];
                 GetWindowText(hStolMail, cChat, 256);
@@ -92,7 +116,7 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 SetWindowText(hStolMail,"");
                 SetFocus(hStolMail);
              }
-             else if(wPar==10)
+             if(wPar==10)
              {
                  //ShowWindow(Okno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
@@ -105,12 +129,6 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  //ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_SHOW);
-             }
-             else if(wPar==12)
-             {
-                 ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(stolyOkno,SW_HIDE);
-                 ShowWindow(stolOkno,SW_HIDE);
              }
              else if(wPar==13)
              {
@@ -146,7 +164,7 @@ int WINAPI stolWinMain ()
     stolwc.cbWndExtra = 0;                                            //dodatkowa pamiêæ dla okna utworzona z tej klasy
 
     if(RegisterClassEx(&stolwc)==0) return 0;
-    stolOkno=CreateWindowEx(0,ClassName,"CzarnyJacek",WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN,50,50,600,550,Okno,0,hInstMain,0);
+    stolOkno=CreateWindowEx(0,ClassName,"BlackJack",WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN,50,50,600,550,Okno,0,hInstMain,0);
     //ShowWindow(dalej_Okno,SW_SHOW);
     //UpdateWindow(dalej_Okno);
     stol=CreateWindowEx(WS_EX_CLIENTEDGE,"STATIC",0,WS_CHILD|WS_VISIBLE,40,30,340,280,stolOkno,0,hInstMain,0);
@@ -156,11 +174,7 @@ int WINAPI stolWinMain ()
     hListKart= CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 20, 40, 60, 190, stol, NULL, hInstMain, NULL);
     for(int i=0; i<11; i++)
     {
-        SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)"karta i-ta");
-    /*SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)"karta 2");
-    SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)"karta 3");
-    SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)"karta 4");
-    SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)"karta 5");*/
+        // funkcja do wyswietlania kart
     }
 
     //gracz1
@@ -203,13 +217,13 @@ int WINAPI stolWinMain ()
     hPodwoj=CreateWindowEx(0,"BUTTON","double",WS_CHILD|WS_VISIBLE,140,240,60,20,stol,0,hInstMain,0);
     hStoj=CreateWindowEx(0,"BUTTON","stop",WS_CHILD|WS_VISIBLE,220,240,60,20,stol,0,hInstMain,0);
 
-    hListGraczyOn = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 405, 30, 147, 201, stolOkno, NULL, hInstMain, NULL);
+    hListGraczyOn = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 405, 30, 147, 241, stolOkno, NULL, hInstMain, NULL);
     wyswietlListe(hListGraczyOn,4);
 
-    hWstan=CreateWindowEx(0,"BUTTON","Wstan",WS_CHILD|WS_VISIBLE,442,242,75,20,stolOkno,0,hInstMain,0);
+    //hWstan=CreateWindowEx(0,"BUTTON","Wstan",WS_CHILD|WS_VISIBLE,442,242,75,20,stolOkno,0,hInstMain,0);
     hOpuscStolik=CreateWindowEx(0,"BUTTON","Opusc Stolik",WS_CHILD|WS_VISIBLE,430,272,100,20,stolOkno,0,hInstMain,0);
 
-    hStolChat=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_DISABLED|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_CHILD|WS_VISIBLE,40,330,510,101,stolOkno,0,hInstMain,0); // 341
+    hStolChat=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_DISABLED|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_CHILD|WS_VISIBLE,40,330,510,101,stolOkno,0,hInstMain,0);
     hStolMail=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,40,441,261,20,stolOkno,0,hInstMain,0);
     hStolWyslij=CreateWindowEx(0,"BUTTON","Wy�lij",WS_CHILD|WS_VISIBLE,320,441,61,20,stolOkno,0,hInstMain,0);
 

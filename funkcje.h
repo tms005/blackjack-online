@@ -11,7 +11,7 @@ char cChat[256];
 
 void pack(Buffer buff, char (&ref)[512]) //pakowanie - klient
 {
-     int i,j=0;
+    unsigned int i,j=0;
 
      ref[0]=buff.ID;
      ref[1]=buff.ID_USR;
@@ -34,7 +34,7 @@ void pack(Buffer buff, char (&ref)[512]) //pakowanie - klient
 
 Buffer unpack(char ref[512]) //odpakowanie - klient
 {
-     int i,j=0;
+     unsigned int i,j=0;
      Buffer tempbuff;
 
         tempbuff.ID=ref[0];

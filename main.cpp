@@ -67,7 +67,7 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          case WM_DESTROY:       //polecenia dla komunikatu WM_CLOSE
          {
             PostQuitMessage(0);
-            //Sleep(50);
+
             break;
          }
          case WM_COMMAND:

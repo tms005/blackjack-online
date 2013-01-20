@@ -115,3 +115,26 @@
 
 1358617936 d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\funkcje.h
 
+1358639199 source:c:\users\addicted\desktop\blackjack-online\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	"funkcje.h"
+
+1358638757 c:\users\addicted\desktop\blackjack-online\funkcje.h
+
+1358614926 source:c:\users\addicted\desktop\blackjack-online\menu.rc
+
+1358639199 source:c:\users\addicted\desktop\blackjack-online\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1358639199 source:c:\users\addicted\desktop\blackjack-online\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
