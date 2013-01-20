@@ -69,20 +69,52 @@ void przepiszChary(char str1[], char str2[])
 		 str1[i] = str2[i];
 }
 
+void wyswietlListeStolow(HWND hLista)
+{
+    Buffer tempbuff;
+
+    tempbuff.iKey[4];//dla testow
+    tempbuff.iKey[0]=1;
+    tempbuff.iKey[1]=2;
+    tempbuff.iKey[2]=3;
+    tempbuff.iKey[3]=4;
+    /*
+    tempbuff.ID=3;
+    tempbuff.iKey[0]=0;
+    pack(tempbuff,pakiet);
+    send(sock,pakiet,sizeof(pakiet),0);
+    recv(sock,pakiet,sizeof(pakiet),0);
+    tempbuff=unpack(pakiet);
+    */
+    char cWyraz[20]="Stol ";
+    for(int d = 0;d<4;d++){
+        if(tempbuff.iKey[d]!=0) {
+                cWyraz[5]=tempbuff.iKey[d]+48;
+                SendMessage(hLista, LB_ADDSTRING, 0, (LPARAM)cWyraz);
+            }
+        }
+}
+
 void wyswietlListe(HWND hLista,int iKey)
 {
+    Buffer tempbuff;
+
     char cChat[256] = "janusz zoska wakus homus janusz zoska wakus homus janusz zoska wakus homus ";//dla testow
+    przepiszChary(tempbuff.cChat, cChat);//dla testow - wyjebac
     /*
-    send();//wyslanie zadania o funkcje wysylajaca liste z podanym iKey zeby wiedzial jaka liste
-    recv();//odebranie listy w polu cChat
+    tempbuff.ID=3;
+    tempbuff.iKey[0]=iKey;
+    pack(tempbuff,pakiet);
+    send(sock,pakiet,sizeof(pakiet),0);
+    recv(sock,pakiet,sizeof(pakiet),0);
+    tempbuff=unpack(pakiet);
     */
     char cWyraz[256];
     memset(cWyraz, 0, 256);
-    int hold,dn=0;
-    hold = strlen(cChat);
-    for(int d = 0;d<hold;d++){
-        if(cChat[d]!=' ') {
-                cWyraz[dn]=cChat[d];
+    unsigned int dn=0;
+    for(unsigned int d = 0;d<strlen(tempbuff.cChat);d++){
+        if(tempbuff.cChat[d]!=' ') {
+                cWyraz[dn]=tempbuff.cChat[d];
                 dn++;
             }
         else {

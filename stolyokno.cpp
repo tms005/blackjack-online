@@ -45,6 +45,7 @@ Buffer sbufferStoly;///////////obsluga naszej ramki dla okna Stoly
 
 /////////////////////////////////////////////////////////deklaracje////////////////////////////////////////////
 void wyswietlListe(HWND hLista, int iKey);//pobiera odpowiednia liste poprzez iKey i wkleja do odpowiedniego hwnd
+void wyswietlListeStolow(HWND hLista);
 void dodajEnter(char str1[]);
 void sklejChary(char str1[], char str2[]);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -79,9 +80,6 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          }*/
          case WM_CLOSE:       //polecenia dla komunikatu WM_CLOSE
          {
-            //ShowWindow(hwnd,SW_HIDE);
-            //ShowWindow(Okno,SW_SHOW);
-            //SendMessage(Okno,WM_DESTROY,0,0);
             PostQuitMessage(0);
             break;
          }
@@ -104,9 +102,10 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              }
              else if((HWND)lPar==hDolacz)
              {
-                //zczytanie z listy
+                int x = SendMessage(hListStoly, LB_GETANCHORINDEX ,LVNI_SELECTED,LVNI_SELECTED)+49;
                 /*
                 sbufferStoly.ID=4;
+                sbufferStoly.iKey[0]=x;
                 pack(sbufferStoly,pakiet);
                 send(sock,pakiet,sizeof(pakiet),0);
                 recv(sock,pakiet,sizeof(pakiet),0);
@@ -133,12 +132,10 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 sbufferStoly.ID_USR=4;//dla testow serwer odsyla id stolu
                 if(sbufferStoly.ID_USR!=0)
                 {
-                    char cIdStolu[256];
-                    memset(cIdStolu,0,256);
-                    cIdStolu[0]=sbufferStoly.ID_USR;
-                    char cWyraz[256]="Stol";
-                    sklejChary(cWyraz,cIdStolu);
-                    SendMessage(hListStoly, LB_ADDSTRING, 0, (LPARAM)cWyraz);
+                   int z=sbufferStoly.ID_USR+48;
+                   char cWyraz[8]="Stol";
+                   cWyraz[4]=' '; cWyraz[5]=z;
+                   SendMessage(hListStoly, LB_ADDSTRING, 0, (LPARAM)cWyraz);
                 }
                 else MessageBox(0,"Nie udalo sie utworzyc stolu!","Ha!",MB_OK);
              }
@@ -219,7 +216,7 @@ int WINAPI stolyWinMain ()
 
     hlStoly=CreateWindowEx(0,"STATIC","Stoly",WS_CHILD|WS_VISIBLE,50,10,50,20,stolyOkno,0,hInstMain,0);
     hListStoly = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 20, 30, 170, 180, stolyOkno, NULL, hInstMain, NULL);
-    //wyswietlListe(hListStoly,0);
+    wyswietlListeStolow(hListStoly);
 
     hlRanking=CreateWindowEx(0,"STATIC","Top 10",WS_CHILD|WS_VISIBLE,260,10,50,20,stolyOkno,0,hInstMain,0);
     hListRanking = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 220, 30, 125, 180, stolyOkno, NULL, hInstMain, NULL);

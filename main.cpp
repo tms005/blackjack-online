@@ -165,7 +165,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     hNick=CreateWindowEx(0,"STATIC","Login: ",WS_CHILD|WS_VISIBLE,160,110,150,20,Okno,0,hInst,0);
     hNickWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,220,110,200,20,Okno,0,hInst,0);
 
-    hPass=CreateWindowEx(0,"STATIC","Has³o:  ",WS_CHILD|WS_VISIBLE,160,170,50,20,Okno,0,hInst,0);
+    hPass=CreateWindowEx(0,"STATIC","Haslo:  ",WS_CHILD|WS_VISIBLE,160,170,50,20,Okno,0,hInst,0);
     hPassWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE|ES_PASSWORD,220,170,200,20,Okno,0,hInst,0);
 
     hLogin=CreateWindowEx(0,"BUTTON","Logowanie",WS_CHILD|WS_VISIBLE,265,230,100,20,Okno,0,hInst,0);
@@ -206,8 +206,6 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
                                    DispatchMessage(&msgs); //funkcja przetwarzajÂ¹ca komunikaty systemowe przez procedury obsÂ³ugi
     }
     return msgs.wParam;
-
-
 
 
  //Przed wyslaniem i po odebraniu uzywamy pack i unpack

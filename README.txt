@@ -18,6 +18,7 @@ WYSYLAMY DO SERWERA:
 			- 2 : pkt graczy w rankingu
 			- 3 : graczy online
 	4 - przylaczenie sie do stolu
+		iKey[0] - numer stolu do ktorego sie dolaczamy
 	5 - utworzenie wlasnego stolu
 	6 - opuszczenie stolu (powrot do menu gry)
 	7 - opuszczenie gry
