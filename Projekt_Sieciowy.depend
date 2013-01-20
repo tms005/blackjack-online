@@ -161,7 +161,7 @@
 	<stdlib.h>
 	<string.h>
 
-1358681097 source:c:\users\addicted\desktop\najnowsza\main.cpp
+1358707182 source:c:\users\addicted\desktop\najnowsza\main.cpp
 	<windows.h>
 	<commctrl.h>
 	<iostream>
@@ -169,7 +169,7 @@
 	<string.h>
 	"funkcje.h"
 
-1358702376 c:\users\addicted\desktop\najnowsza\funkcje.h
+1358706936 c:\users\addicted\desktop\najnowsza\funkcje.h
 
 1358614926 source:c:\users\addicted\desktop\najnowsza\menu.rc
 
@@ -177,7 +177,7 @@
 	<windows.h>
 	<commctrl.h>
 
-1358702338 source:c:\users\addicted\desktop\najnowsza\stolyokno.cpp
+1358707011 source:c:\users\addicted\desktop\najnowsza\stolyokno.cpp
 	<windows.h>
 	<commctrl.h>
 	<iostream>

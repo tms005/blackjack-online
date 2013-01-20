@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+extern SOCKET sock;
+
 extern HINSTANCE hInstMain;
 extern HWND Okno;
 
@@ -42,12 +44,15 @@ char cChat[256];
 };
 
 Buffer sbufferStoly;///////////obsluga naszej ramki dla okna Stoly
+char pakiet[512]= {0};
 
 /////////////////////////////////////////////////////////deklaracje////////////////////////////////////////////
 void wyswietlListe(HWND hLista, int iKey);//pobiera odpowiednia liste poprzez iKey i wkleja do odpowiedniego hwnd
 void wyswietlListeStolow(HWND hLista);
 void dodajEnter(char str1[]);
 void sklejChary(char str1[], char str2[]);
+void pack(Buffer buff, char (&ref)[512]);
+Buffer unpack(char ref[512]);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /*
@@ -239,6 +244,15 @@ int WINAPI stolyWinMain ()
     hStolyChat=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_DISABLED|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_CHILD|WS_VISIBLE,20,260,375,130,stolyOkno,0,hInstMain,0);
     hStolyMail=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,20,400,290,20,stolyOkno,0,hInstMain,0);
     hStolyWyslij=CreateWindowEx(0,"BUTTON","Wyslij",WS_CHILD|WS_VISIBLE,320,400,75,20,stolyOkno,0,hInstMain,0);
+
+
+	for(;; Sleep(10))
+	{
+		if(recv(sock,pakiet,sizeof(pakiet),0))
+		{
+		    sbufferStoly=unpack(pakiet);
+		}
+	}
 
     return 0;
 }

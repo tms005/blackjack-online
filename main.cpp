@@ -171,10 +171,9 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     hLogin=CreateWindowEx(0,"BUTTON","Logowanie",WS_CHILD|WS_VISIBLE,265,230,100,20,Okno,0,hInst,0);
     hRejestr = CreateWindowEx(0,"BUTTON","Rejestracja",WS_VISIBLE|WS_CHILD,265,270,100,20,Okno,0,hInst,0);
 
-
     //laczenie z serwerem
 
-   /* int RetVal = 0;
+    int RetVal = 0;
         WSAData wsaData;
         WORD DllVersion = MAKEWORD(2,1);
         RetVal = WSAStartup(DllVersion, &wsaData);
@@ -193,12 +192,12 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
 
     if ( connect(sock, (sockaddr*)&saddr, sizeof(sockaddr)) == SOCKET_ERROR )
     {
-        cout<<"Błąd połączenia z serverem";
+        MessageBox(0,"Blad polaczenia z serwem","Ha!",MB_OK);
         sock = 0;
         return -1;
     }
 
-    char pakiet[512]= {0};*/
+    char pakiet[512]= {0};
 
     while(GetMessage(&msgs,0,0,0)) //pÃªtla obsÂ³ugujÂ¹ca wymianÃª komunikatÃ³w
     {
@@ -207,18 +206,8 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     }
     return msgs.wParam;
 
-
- //Przed wyslaniem i po odebraniu uzywamy pack i unpack
- // pack(sbuffer,pakiet);
- // sbuffer=unpack(pakiet);
-
-  //Wyglad senda i recv
-  //  send(sock,pakiet,sizeof(pakiet),0);
-  //  recv(sock,pakiet,sizeof(pakiet),0);
-
-
-  //  closesocket(sock);
-  //  WSACleanup();
+    closesocket(sock);
+    WSACleanup();
 }
 
 void zaloguj(int ID)
