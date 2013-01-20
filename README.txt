@@ -38,16 +38,28 @@ SERWER ODSYLA:
 
 	0 - ( w ID_USR : kod gracza ktory przesyla wiadomosc, w cChat - sama wiadomosc )
 	1 - ( w ID_USR : Twoj kod gracza, bedacy Twoim identyfikatorem uzytkownika (od teraz stanowi sposob rozpoznania Twojego konta)
+	      w ID     : (1) jesli sie zarejestrowales
+			 (2) jesli takie konto juz istnieje
+	
 	2 - ( w ID     : (1) jesli sie zalogowales i wszystko jest ok
 			 (2) to jest  jesli serwer jest zapelniony 
-			 (3) dostajesz jesli haslo jest niepoprawne )
+			 (3) dostajesz jesli haslo jest niepoprawne
+	
 	3 - ( w ID     : (wartosc niezerowa) jesli jakiekolwiek stoly istnieja 
-			 (0) jesli nie ma zadnych stolow
+			 (0) jesli nie ma zadnych stolow/graczy w rankingu/pkt/graczy online
 
+		Jesli iKey[0] od klienta byl 0:
+			 			iKey[0-3] - klucze stolu pierwszego, drugiego, trzeciego i czwartego
+			 			iKey[4-15] - klucze uzytkownikow siedzacych przy stolach
+						cChat[256] - nicki graczy przy stole(bo skad klient bez bazy z kluczami i nicami ma wiedziec kto ma jaki nick do ID_USR)
+					     1: 
+						cChat[256] - nicki graczy z rankingu
+					     2: 
+						cChat[256] - pkt graczy z rankingu
+					     3: 
+						cChat[256] - nicki graczy online
+						
 
-			 ID - klucz stolu pierwszego
-			 iKey[0-2] - klucze stolu drugiego, trzeciego i czwartego
-			 iKey[3-15] - klucze uzytkownikow siedzacych przy stolach )
 	4 - 	       : ID_USR - (0) jesli przylaczyles sie do stolu i wszystko jest ok
 				  (wartosc niezerowa) - jesli do stolu dolacza gracz, to jest to jednoczesnie jego identyfikator
 	 

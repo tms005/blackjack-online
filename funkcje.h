@@ -11,7 +11,7 @@ char cChat[256];
 
 void pack(Buffer buff, char (&ref)[512]) //pakowanie - klient
 {
-     int i,j=0;
+    unsigned int i,j=0;
 
      ref[0]=buff.ID;
      ref[1]=buff.ID_USR;
@@ -34,7 +34,7 @@ void pack(Buffer buff, char (&ref)[512]) //pakowanie - klient
 
 Buffer unpack(char ref[512]) //odpakowanie - klient
 {
-     int i,j=0;
+     unsigned int i,j=0;
      Buffer tempbuff;
 
         tempbuff.ID=ref[0];
@@ -59,6 +59,14 @@ void sklejChary(char str1[], char str2[])
      str1[hold] = SPACE;
 	 for(i=0;i<=strlen(str2);i++)
 		 str1[++hold] = str2[i];
+}
+
+void przepiszChary(char str1[], char str2[])
+{
+     unsigned int i;
+     memset(str1, 0, 256);
+	 for(i=0;i<=strlen(str2);i++)
+		 str1[i] = str2[i];
 }
 
 void wyswietlListe(HWND hLista,int iKey)
