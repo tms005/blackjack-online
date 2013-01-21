@@ -1,0 +1,4 @@
+Uwagi!
+#1 apropos punktu 4: stoly nie maja ID! Sa po prostu numerowane 0-3.
+#2 apropos punktu 5: wypierdolić go całkiem, z uwagi na powyższe. Stoły wyświetlajcie 1-4 zależnie od indeksu.
+    - Karol.
