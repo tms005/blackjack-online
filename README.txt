@@ -1,76 +1,160 @@
 struct Buffer {
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
-int ID_USR; // nadawany przez serwer klucz dla ka縟ego po彻czonego z serwerem u縴tkownika\
+int ID_USR; // nadawany przez serwer klucz dla ka偶dego po艂膮czonego z serwerem u偶ytkownika\
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji 
 char cChat[256];
 };
 
 
-definicje kluczy ID :
-WYSYLAMY DO SERWERA:
 
-	0 - czat (w polu CChat mamy wiadomosc do przetworzenia);
-	1 - utworzenie konta
-	2 - logowanie/wylogowanie
-	3 - wyszukiwanie dostepnych:
-		iKey[0] - 0 : stolow do gier
-			- 1 : graczy w rankingu
-			- 2 : pkt graczy w rankingu
-			- 3 : graczy online
-	4 - przylaczenie sie do stolu
-		iKey[0] - numer stolu do ktorego sie dolaczamy
-	5 - utworzenie wlasnego stolu
-	6 - opuszczenie stolu (powrot do menu gry)
-	7 - opuszczenie gry
-	8 - gramy (funkcja silnika gry)
-		iKey[0] - 0 : pasujemy
-			- 1 : dobieramy
-			- 2 : podwajanie
-	9 - wyst筽ienie b酬du
+Karol:
+w kliencie zawrzyjcie struktur臋 kt贸ra b臋dzie posiada艂a informacje o stole takie jak:
+
+ID graczy, ich Nazwy, Stawki (obstawiona oraz stan konta), zbior kart jakie ma kazdy lacznie z krupierem, suma punktow oraz aktywnie grajacy gracz
 
 
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+						WYSYLAMY DO SERWERA:
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+__________________________________________________________________________
+WIADOMOSC CZATU:
+
+[ ID ]:	0	[cChat] - wiadomosc zakonczona znakiem przejscia do nowej linii
+
+--------------------------------------------------------------------------
+UTWORZENIE KONTA:
+
+[ ID ]:	1	[cChat] : 2 -  ci膮gi znak贸w, rozpoczynaj膮ce si臋 od indeksu 0, ko艅czone spacj膮. Pierwszy z ci膮g贸w to nazwa u偶ytkownika, drugi ci膮g to has艂o do konta 
+
+--------------------------------------------------------------------------
+LOGOWANIE/WYLOGOWANIE:
+
+W przypadku logowania:
+[ ID ]:	2	[cChat] : 2  - ci膮gi znak贸w, rozpoczynaj膮ce si臋 od indeksu 0, ko艅czone spacj膮. Pierwszy z ci膮g贸w to nazwa u偶ytkownika, drugi ci膮g to has艂o do konta 
+
+w przypadku wylogowywania:
+[ ID ]:	2
+
+--------------------------------------------------------------------------
+INFORMACJE:
+
+[ ID ]:	3	[ iKey[0] ] :	0 - przeslij informacje o stolach
+				1 - przeslij informacje o 10 najlepszych graczach w rankingu (nazwa, pkt, id)
+				2 - przeslij informacje o zalogowanych graczach
+				
+--------------------------------------------------------------------------
+PRZYLACZENIE SIE DO STOLU:
+
+[ ID ]:	4	[ iKey[0] ]:	nr stolu do ktorego chcemy dolaczyc
+
+--------------------------------------------------------------------------
+OPUSZCZENIE DANEGO STOLU
+
+[ ID ]:	5	
+
+--------------------------------------------------------------------------
+OPUSZCZENIE GRY:
+
+[ ID ]:	6	
+
+--------------------------------------------------------------------------
+GRA:
+
+[ ID ]:	7	
+
+// DO AKTUALIZACJI
+--------------------------------------------------------------------------
 
 
-SERWER ODSYLA: 
-	zawsze kod klucza ID ktory wyslales jesli wszystko sie udalo (gdy serwer nie popelnil bledu)
-	9 w przypadku gdy nastapil blad
 
-	0 - ( w ID_USR : kod gracza ktory przesyla wiadomosc, w cChat - sama wiadomosc )
-	1 - ( w ID_USR : Twoj kod gracza, bedacy Twoim identyfikatorem uzytkownika (od teraz stanowi sposob rozpoznania Twojego konta)
-	      w ID     : (1) jesli sie zarejestrowales
-			 (2) jesli takie konto juz istnieje
-	
-	2 - ( w ID     : (1) jesli sie zalogowales i wszystko jest ok
-			 (2) to jest  jesli serwer jest zapelniony 
-			 (3) dostajesz jesli haslo jest niepoprawne
-	
-	3 - ( w ID     : (wartosc niezerowa) jesli jakiekolwiek stoly istnieja 
-			 (0) jesli nie ma zadnych stolow/graczy w rankingu/pkt/graczy online
 
-		Jesli iKey[0] od klienta byl 0:
-			 			iKey[0-3] - klucze stolu pierwszego, drugiego, trzeciego i czwartego
-			 			iKey[4-15] - klucze uzytkownikow siedzacych przy stolach
-						cChat[256] - nicki graczy przy stole(bo skad klient bez bazy z kluczami i nicami ma wiedziec kto ma jaki nick do ID_USR)
-					     1: 
-						cChat[256] - nicki graczy z rankingu
-					     2: 
-						cChat[256] - pkt graczy z rankingu
-					     3: 
-						cChat[256] - nicki graczy online
-						
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+						SERWER ODSYLA:
+////////////////////////////////////////////////////////////////////////////////////////////////////////
+__________________________________________________________________________
+WIADOMOSC CZATU:
 
-	4 - 	       : ID_USR - (0) jesli przylaczyles sie do stolu i wszystko jest ok
-				  (wartosc niezerowa) - jesli do stolu dolacza gracz, to jest to jednoczesnie jego identyfikator
-	 
-	5 -	       : ID_USR - wartosc niezerowa - id stolu - jesli dalo sie utworzyc
-				- 0 jesli nie udalo sie utworzyc stolu
-	6 - 	       : ID_USR - (wartosc niezerowa) - uzytkownik o id podanym w tym polu opuscil stol
-				  0 jesli pomyslnie opusciles stol
-	7 - 	       : serwer nie odsyla zadnych danych, ma Cie w dupie
-	8 - 	       : ID_USR - id uzytkownika ktory wyslal zapytanie (pomimo ze jeden klient wysyla zadanie do serwera, to serwer wysyla odpowiedz do wszystkich klientow)
+[ ID ]:	0 	[ID_USR]: ID gracza wysylajacego wiadomosc  [cChat] - wiadomosc // zalozenie: jesli wysylasz wiadomosc to otrzymasz ja tez z powrotem
+
+--------------------------------------------------------------------------
+UTWORZENIE KONTA:
+
+[ ID ]:	1   	[ID_USR]: Nowoutworzone ID gracza, przyporz膮dkowane do konta lub 0 je艣li b艂膮d (np ju偶 istnieje podana nazwa uzytkownika)
+
+--------------------------------------------------------------------------
+LOGOWANIE/WYLOGOWANIE:
+
+w przypadku logowania:
+[ ID ]:	2	[ iKey[0] ] :	1 - zalogowales/as sie  
+				2 - serwer zapelniony, nie udalo sie zalogowac 
+				3 - bledne haslo lub nazwa uzytkownika
+		
+		[ iKey[1] ] :   ID uzytkownika dla konta za pomoca ktorego sie logowales/as
+
+		[ iKey[2] ] :	Wysokosc srodkow na koncie gracza	//TUTAJ SERWER AUTOMATYCZNIE PRZYJMUJE ZE GRACZ MOZE MIEC MINIMUM 1000 kredytow
+
+w przypadku wylogowywania:
+serwer sprawdza czy uzytkownik ktory sie wylogowywal bral udzial w jakiejs grze, jesli tak to rozsyla informacje o tym, ze gracz opuscil stol, patrz OPUSZCZANIE STOLU
+
+--------------------------------------------------------------------------
+INFORMACJE:
+
+[ ID ]:	3	[ iKey[0] ] :	0 - przeslij informacje o stolach
+				1 - przeslij informacje o 10 najlepszych graczach w rankingu (nazwa, pkt, id)
+				2 - przeslij informacje o zalogowanych graczach
+				
+JESLI iKey[0] == 0
+		[ iKey[1-12] ]:	ID gracza siedzacego przy stole
+		
+		[ cChat[ ] ] :	pocz膮wszy od pola 0 az do wyczerpania limitu oddzielone spacjami nicki graczy ktorzy siedza przy stolach
+
+		UWAGA! Zalozenie: jesli przy ktoryms miejscu przy stoliku nie siedzi gracz, to nick nalezy po prostu do pierwszego kolejnego przy ktorym siedzi.
+JESLI iKey[0] == 1
+
+		[ iKey[1-10] ]:	punkty 10 najlepszych graczy (miejsce zaleznym od indeksu iKey, im nizszy indeks, tym gracz lepszy) 
+		
+		[ cChat[ ] ] :	pocz膮wszy od pola 0 az do wyczerpania limitu oddzielone spacjami nicki 10 najlepszych graczy 
+
+JESLI iKey[0] == 2
+
+		[ cChat[ ] ] :	pocz膮wszy od pola 0 az do wyczerpania limitu oddzielone spacjami nicki zalogowanych graczy nie siedzacych przy stolach 
+
+--------------------------------------------------------------------------
+
+PRZYLACZENIE SIE DO STOLU:
+
+[ ID ]:	4	[ ID_USR ]:	0 - dolaczyles/as do stolu i wszystko jest ok
+				wartosc niezerowa - do stolu dolacza gracz o podanym w tym polu ID
+		Jesli ID_USR niezerowe:
+
+		[ cChat ]:	nazwa danego gracza zakonczone spacja lub innym bialym znakiem
+
+--------------------------------------------------------------------------
+OPUSZCZENIE DANEGO STOLU
+
+[ ID ]:	5	[ ID_USR ] :	wartosc niezerowa - uzytkownik o takim ID opuscil stol.
+		[ cChat ]:	nazwa gracza opuszczaj膮cego zakonczone spacja lub innym bialym znakiem
+
+--------------------------------------------------------------------------
+OPUSZCZENIE GRY:
+
+[ ID ]:	6	[ ID_USR ] :	ID gracza ktory opuscil gre (praktycznie to samo co wylogowanie)
+
+--------------------------------------------------------------------------
+GRA:
+
+[ ID ]:	7	
+
+// DO AKTUALIZACJI
+--------------------------------------------------------------------------
+
+	7 - 	       : ID_USR - id uzytkownika ktory wyslal zapytanie (pomimo ze jeden klient wysyla zadanie do serwera, to serwer wysyla odpowiedz do wszystkich klientow)
 		       : 	- iKey[0] - zapytanie uzytkownika jakie otrzymal serwer
 		       :        - iKey[1] - wartosc dobranej karty o ile w iKey[0] jest wartosc niezerowa)
 
 		       
+
+
