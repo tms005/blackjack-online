@@ -2,12 +2,16 @@
 #define FUNKCJE_H_INCLUDED
 #define SPACE ' '
 
+    SOCKADDR_IN saddr;
+    SOCKET      sock;
+
 struct Buffer {
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
-int ID_USR; // nadawany przez serwer klucz dla ka¿dego po³¹czonego z serwerem u¿ytkownika
+int ID_USR; // nadawany przez serwer klucz dla kaÂ¿dego poÂ³Â¹czonego z serwerem uÂ¿ytkownika
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji
 char cChat[256];
 };
+
 
 void pack(Buffer buff, char (&ref)[512]) //pakowanie - klient
 {
@@ -134,4 +138,34 @@ void dodajEnter(char str1[])
 		 str1[hold++] = cEnter[i];
 }
 
+
+void PrintCard(int iCard, char cKarta[]) {
+	using namespace std;
+	// Print Rank
+	const int kiRank = (iCard % 13);
+	if (kiRank == 0) {
+		cKarta[0]='A';
+	} else if (kiRank < 9) {
+		cKarta[0]=(char)(kiRank + 1);
+	} else if (kiRank == 9) {
+		cKarta[0]='T';
+	} else if (kiRank == 10) {
+		cKarta[0]='J';
+	} else if (kiRank == 11) {
+		cKarta[0]='Q';
+	} else {
+		cKarta[0]='K';
+	}
+	// Print Suit
+	const int kiSuit = (iCard/13);
+	if (kiSuit == 0) {
+		cKarta[1]='C';
+	} else if (kiSuit == 1) {
+		cKarta[1]='D';
+	} else if (kiSuit == 2) {
+		cKarta[1]='H';
+	} else {
+		cKarta[1]='S';
+	}
+}
 #endif // FUNKCJE_H_INCLUDED
