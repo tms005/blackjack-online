@@ -2,16 +2,32 @@
 #define FUNKCJE_H_INCLUDED
 #define SPACE ' '
 
-    SOCKADDR_IN saddr;
-    SOCKET      sock;
+SOCKADDR_IN saddr;
+SOCKET      sock;
+
+HWND hListStoly;
+HWND hListGraczy;
+HWND hListRanking;
+HWND hListRankingPkt;
+HWND hListGraczyOn;
+
+HWND hStolyChat;
+HWND hStolChat;
 
 struct Buffer {
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
-int ID_USR; // nadawany przez serwer klucz dla kaÂ¿dego poÂ³Â¹czonego z serwerem uÂ¿ytkownika
+int ID_USR; // nadawany przez serwer klucz dla ka¿dego po³¹czonego z serwerem u¿ytkownika
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji
 char cChat[256];
 };
 
+struct Stol {
+int iIdGraczy[3];//klucze id graczy przy stole
+char cNazwyGraczy[3][20];//nazwy graczy przy stole
+int iStawka;//stawka postawiona
+int iKonto;//stan konto klienta
+char cKarty[4];//karty wszystkich graczy wlacznie z krupierem pod indeksem 0
+};
 
 void pack(Buffer buff, char (&ref)[512]) //pakowanie - klient
 {
@@ -73,46 +89,17 @@ void przepiszChary(char str1[], char str2[])
 		 str1[i] = str2[i];
 }
 
-void wyswietlListeStolow(HWND hLista)
+void dodajEnter(char str1[])
 {
-    Buffer tempbuff;
-
-    tempbuff.iKey[4];//dla testow
-    tempbuff.iKey[0]=1;
-    tempbuff.iKey[1]=2;
-    tempbuff.iKey[2]=3;
-    tempbuff.iKey[3]=4;
-    /*
-    tempbuff.ID=3;
-    tempbuff.iKey[0]=0;
-    pack(tempbuff,pakiet);
-    send(sock,pakiet,sizeof(pakiet),0);
-    recv(sock,pakiet,sizeof(pakiet),0);
-    tempbuff=unpack(pakiet);
-    */
-    char cWyraz[20]="Stol ";
-    for(int d = 0;d<4;d++){
-        if(tempbuff.iKey[d]!=0) {
-                cWyraz[5]=tempbuff.iKey[d]+48;
-                SendMessage(hLista, LB_ADDSTRING, 0, (LPARAM)cWyraz);
-            }
-        }
+     CHAR cEnter[256]="\r\n";
+     unsigned int i, hold;
+     hold = strlen(str1);
+	 for(i=0;i<=strlen(cEnter);i++)
+		 str1[hold++] = cEnter[i];
 }
 
-void wyswietlListe(HWND hLista,int iKey)
+void wyswietlListe(HWND hLista, Buffer tempbuff)
 {
-    Buffer tempbuff;
-
-    char cChat[256] = "janusz zoska wakus homus janusz zoska wakus homus janusz zoska wakus homus ";//dla testow
-    przepiszChary(tempbuff.cChat, cChat);//dla testow - wyjebac
-    /*
-    tempbuff.ID=3;
-    tempbuff.iKey[0]=iKey;
-    pack(tempbuff,pakiet);
-    send(sock,pakiet,sizeof(pakiet),0);
-    recv(sock,pakiet,sizeof(pakiet),0);
-    tempbuff=unpack(pakiet);
-    */
     char cWyraz[256];
     memset(cWyraz, 0, 256);
     unsigned int dn=0;
@@ -129,15 +116,11 @@ void wyswietlListe(HWND hLista,int iKey)
     }
 }
 
-void dodajEnter(char str1[])
+void wyswietlListeGraczyOn(HWND hLista, Stol tempstol)
 {
-     CHAR cEnter[256]="\r\n";
-     unsigned int i, hold;
-     hold = strlen(str1);
-	 for(i=0;i<=strlen(cEnter);i++)
-		 str1[hold++] = cEnter[i];
+    for(int i=0;i<3;i++)
+        SendMessage(hLista, LB_ADDSTRING, 0, (LPARAM)tempstol.cNazwyGraczy[i]);
 }
-
 
 void PrintCard(int iCard, char cKarta[]) {
 	using namespace std;
@@ -168,4 +151,31 @@ void PrintCard(int iCard, char cKarta[]) {
 		cKarta[1]='S';
 	}
 }
+
+void pobierzListyStolyOkno()
+{
+    Buffer tempbuff;
+    char tempakiet[512] = {0};
+
+    tempbuff.ID=3;
+    tempbuff.iKey[0]=1;//graczy w rankingu
+    pack(tempbuff,tempakiet);
+    send(sock,tempakiet,sizeof(tempakiet),0);
+    Sleep(50);
+    tempbuff.iKey[0]=2;//graczy online
+    pack(tempbuff,tempakiet);
+    send(sock,tempakiet,sizeof(tempakiet),0);
+}
+
+void pobierzListyStol()
+{
+    Buffer tempbuff;
+    char tempakiet[512] = {0};
+
+    tempbuff.ID=3;
+    tempbuff.iKey[0]=0;//info o stolach
+    pack(tempbuff,tempakiet);
+    send(sock,tempakiet,sizeof(tempakiet),0);
+}
+
 #endif // FUNKCJE_H_INCLUDED
