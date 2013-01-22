@@ -39,7 +39,7 @@ HWND hStolWyloguj;
 
 struct Buffer{
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
-int ID_USR; // nadawany przez serwer klucz dla ka�dego po��czonego z serwerem u�ytkownika
+int ID_USR; // nadawany przez serwer klucz dla ka¿dego po³¹czonego z serwerem u¿ytkownika
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji
 char cChat[256];
 };
@@ -72,16 +72,42 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          case WM_COMMAND:
          {
              if((HWND)lPar==hDobierz)
-             {
-                // funkcja dobierania
-             }
+             {  stolbuff.ID=8;
+                stolbuff.iKey[0]=1;
+                pack(stolbuff,spakiet);
+                send(sock,spakiet,sizeof(spakiet),0);
+                recv(sock,spakiet,sizeof(spakiet),0);
+                stolbuff=unpack(spakiet);stolbuff.iKey[0]=24;stolbuff.iKey[1]=24;
+                if(stolbuff.iKey[0]!=0)
+                {
+                char cKarta[4]={0};
+                PrintCard(stolbuff.iKey[1], cKarta);
+
+                SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)cKarta);
+                }
+
+            }
+
              else if((HWND)lPar==hPodwoj)
-             {
-                    // funkcja podwajania stawki
+             {  stolbuff.ID=8;
+                stolbuff.iKey[0]=2;
+                pack(stolbuff,spakiet);
+                send(sock,spakiet,sizeof(spakiet),0);
+                recv(sock,spakiet,sizeof(spakiet),0);
+                stolbuff=unpack(spakiet);
+                if(stolbuff.iKey[0]!=0)
+                {
+                char cKarta[4]={0};
+                PrintCard(stolbuff.iKey[1], cKarta);
+
+                SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)cKarta);
+                }
              }
              else if((HWND)lPar==hStoj)
-             {
-                    // funkcja rezygnacji z rozgrywki
+             {  stolbuff.ID=8;
+                stolbuff.iKey[0]=0;
+                pack(stolbuff,spakiet);
+                send(sock,spakiet,sizeof(spakiet),0);
              }
              else if((HWND)lPar==hOpuscStolik)
              {
@@ -136,7 +162,7 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              break;
          }
          default:
-         return DefWindowProc(hwnd,msg,wPar,lPar);       //domyœlna obs³uga reszty komunikatów
+         return DefWindowProc(hwnd,msg,wPar,lPar);       //domyÅlna obsÂ³uga reszty komunikatÃ³w
         }
         return 0;
 }
@@ -149,14 +175,14 @@ int WINAPI stolWinMain ()
     stolwc.lpszClassName = ClassName;                                 //nazwa klasy. przekazanie globalne.
     stolwc.lpfnWndProc = stolWndProc;                                //
     stolwc.style = 0;                                                 //
-    stolwc.cbSize = sizeof (WNDCLASSEX);                              //rozmiar klasy w bajtach w pamiêci
+    stolwc.cbSize = sizeof (WNDCLASSEX);                              //rozmiar klasy w bajtach w pamiÃªci
     stolwc.hIcon = LoadIcon (NULL, IDI_APPLICATION);                  //uchwyt ikony okna
-    stolwc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);                //uchwyt ma³ej ikony okna
-    stolwc.hCursor = LoadCursor (NULL, IDC_ARROW);                    //uchwyt kursora - s³u¿y do za³adowania kursora tzw. "strza³ki"
+    stolwc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);                //uchwyt maÂ³ej ikony okna
+    stolwc.hCursor = LoadCursor (NULL, IDC_ARROW);                    //uchwyt kursora - sÂ³uÂ¿y do zaÂ³adowania kursora tzw. "strzaÂ³ki"
     stolwc.lpszMenuName = "Menu_Window";                                          //nazwa menu
-    stolwc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 0);               //uchwyt do "pêdzla" z t³em
-    stolwc.cbClsExtra = 0;                                            //dodatkowa pamiêæ dla okna klasy
-    stolwc.cbWndExtra = 0;                                            //dodatkowa pamiêæ dla okna utworzona z tej klasy
+    stolwc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 0);               //uchwyt do "pÃªdzla" z tÂ³em
+    stolwc.cbClsExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna klasy
+    stolwc.cbWndExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna utworzona z tej klasy
 
     if(RegisterClassEx(&stolwc)==0) return 0;
     stolOkno=CreateWindowEx(0,ClassName,"BlackJack",WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN,50,50,600,550,Okno,0,hInstMain,0);
@@ -217,7 +243,7 @@ int WINAPI stolWinMain ()
 
     hStolChat=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_DISABLED|WS_VSCROLL|ES_MULTILINE|ES_AUTOVSCROLL|WS_CHILD|WS_VISIBLE,40,330,510,101,stolOkno,0,hInstMain,0);
     hStolMail=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,40,441,261,20,stolOkno,0,hInstMain,0);
-    hStolWyslij=CreateWindowEx(0,"BUTTON","Wy�lij",WS_CHILD|WS_VISIBLE,320,441,61,20,stolOkno,0,hInstMain,0);
+    hStolWyslij=CreateWindowEx(0,"BUTTON","Wylij",WS_CHILD|WS_VISIBLE,320,441,61,20,stolOkno,0,hInstMain,0);
 
     hStolWyloguj=CreateWindowEx(0,"BUTTON","Wyloguj",WS_CHILD|WS_VISIBLE,450,441,70,20,stolOkno,0,hInstMain,0);
 
