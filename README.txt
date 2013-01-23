@@ -12,6 +12,9 @@ w kliencie zawrzyjcie strukturę która będzie posiadała informacje o stole ta
 
 ID graczy, ich Nazwy, Stawki (obstawiona oraz stan konta), zbior kart jakie ma kazdy lacznie z krupierem, suma punktow oraz aktywnie grajacy gracz
 
+UWAGA: Zmiana z : 23 stycznia
+Maksymalna ilosc stolow: 4
+Maksymalna ilosc graczy przy stole: 3
 
 
 
