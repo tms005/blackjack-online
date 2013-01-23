@@ -92,8 +92,7 @@ LOGOWANIE/WYLOGOWANIE:
 
 w przypadku logowania:
 [ ID ]:	2	[ iKey[0] ] :	1 - zalogowales/as sie  
-				2 - serwer zapelniony, nie udalo sie zalogowac 
-				3 - bledne haslo lub nazwa uzytkownika
+                           2 - bledne haslo lub nazwa uzytkownika
 		
 		[ iKey[1] ] :   ID uzytkownika dla konta za pomoca ktorego sie logowales/as
 
