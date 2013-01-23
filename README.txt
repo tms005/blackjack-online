@@ -129,8 +129,9 @@ JESLI iKey[0] == 2
 PRZYLACZENIE SIE DO STOLU:
 
 [ ID ]:	4	[ ID_USR ]:	0 - dolaczyles/as do stolu i wszystko jest ok
-				wartosc niezerowa - do stolu dolacza gracz o podanym w tym polu ID
-		Jesli ID_USR niezerowe:
+                        -1 - stolik pelny, nie mozesz sie przylaczyc
+				 wartosc niezerowa - do stolu dolacza gracz o podanym w tym polu ID
+		Jesli ID_USR dodatnie:
 
 		[ cChat ]:	nazwa danego gracza zakonczone spacja lub innym bialym znakiem
 
