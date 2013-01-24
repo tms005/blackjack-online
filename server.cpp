@@ -102,6 +102,9 @@ int GetNextCard(bool baCardsDealt[]);
 int ifend(table STOL, klient* gracz);
 int ScoreHand(int iaHand[], const int kiCardCount);
 int vCzyKoniec(table, klient*);	
+void complete_house(table* STOL, int g);
+void jump_next(table *STOL, klient *gracz, char* cMessage);
+void  vFindWinner(table* STOL, int IT, char* cMessage);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////SILNIK GRY///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -339,7 +342,7 @@ switch(iMode)
 				 }
 				 //mamy zapelniona liste, wybieramy teraz najlepsze 10 wynikow:
 				 vector<dane>::iterator it = ranking.begin();
-				 while(ranking.size() >10)
+				 while(ranking.size() >5)
 				 {
 					 it = ranking.begin();
 					 for(vector<dane>::iterator x=ranking.begin()+1; x<ranking.end(); x++)
@@ -360,13 +363,17 @@ switch(iMode)
 						 {
 						 if(x->iScore > it->iScore) it = x;
 						 }
-					sbMssg.iKey[k] = it->iScore;
+					sbMssg.iKey[k] = it->ID;
+					sbMssg.iKey[k+5] = it->iScore;
 					best+=it->cName;
 					best+=' ';
+					k++;
 				 }
 				 strcpy(sbMssg.cChat, best.c_str() );
 				 break;
-				}	
+				}
+
+
 			case 2:
 				{
 					string zalogowani;
@@ -391,6 +398,10 @@ switch(iMode)
 		
 		break;
 	}
+
+
+
+
 	case 4:
 		{ // przylaczenie sie do stolu..
 			if(sbMssg.ID_USR >=0 && sbMssg.ID_USR < MAX_TABLES)
@@ -561,8 +572,12 @@ switch(iMode)
 							STOLIK[gracz->IT].iPlayerCash[gracz->iMySpot] = gracz->iCash - STOLIK[gracz->IT].iPlayerBid[gracz->iMySpot];
 							STOLIK[gracz->IT].iaPlayerHand[gracz->IT][++STOLIK[gracz->IT].iPlayerCardCount[gracz->iMySpot]]	= GetNextCard(STOLIK[gracz->IT].baCardsDealt);			
 							STOLIK[gracz->IT].iSTARTED=1;
+							sbMssg.iKey[1] = STOLIK[gracz->IT].iaPlayerHand[gracz->IT][STOLIK[gracz->IT].iPlayerCardCount[gracz->iMySpot]];	
+							sConversion(&sbMssg, cMessage);	
+							send( gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);
 							}//else: impossible!
 						}
+							
 						break;
 						 }
 
@@ -609,6 +624,10 @@ switch(iMode)
 						}
 						STOLIK[gracz->IT].iActive[gracz->iMySpot]=1;
 						break;
+
+							sbMssg.iKey[1] = STOLIK[gracz->IT].iaPlayerHand[gracz->IT][STOLIK[gracz->IT].iPlayerCardCount[gracz->iMySpot]];	
+							sConversion(&sbMssg, cMessage);	
+							send( gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);
 						}
 					case 0:
 						{
@@ -618,15 +637,14 @@ switch(iMode)
 						}
 					default:
 						{
-
-							STOLIK[gracz->IT].iActive[gracz->iMySpot] = ifend(STOLIK[gracz->IT], gracz);		//spr czy w losowaniu przekroczono 21
-							int y= vCzyKoniec(STOLIK[gracz->IT], gracz);														//spr czy caly stolik zakonczyl rozgrywke?
+							STOLIK[gracz->IT].iActive[gracz->iMySpot] = ifend(STOLIK[gracz->IT], gracz);					//spr czy w losowaniu przekroczono 21
+							int y= vCzyKoniec(STOLIK[gracz->IT], gracz);																	//spr czy caly stolik zakonczyl rozgrywke?
 							if(y){
-							//	complete_house();																				//jesli kompletny, to wybierz wartosci dla krupiera
-						//		find_winner(STOLIK[gracz->IT]);															//oraz oblicz kto zwyciezyl, a kto przegral
-								}
-							else ;
-				//			jump_next();																							//jesli nadal nie ma zwyciezcy przejdz do kolejnego gracza
+							complete_house(STOLIK, gracz->IT);																				//jesli kompletny, to wybierz wartosci dla krupiera
+							vFindWinner(STOLIK,gracz->IT, cMessage);																	//nakaz klientom importowac dane o house
+							}																																	//oraz oblicz kto zwyciezyl, a kto przegral i przeslij wyniki do struktur							
+							else 
+							jump_next(STOLIK, gracz, cMessage);																													//jesli nadal nie ma zwyciezcy przejdz do kolejnego gracza
 						}
 					}
 
@@ -646,6 +664,43 @@ switch(iMode)
 		break;
 		}
 		
+	case 8:
+		{
+		
+			if(sbMssg.iKey[0] == 0) // pobieramy dane o gotowce danego gracza
+			{
+			int found=-1, id=sbMssg.ID_USR;
+			for(int i=0;i<MAX_CLIENTS;i++) if(gracze[i].ID=id) found = i;
+			if(found>=0)
+				{ // jesli gracz gra, to jego gotowka mogla sie juz zmienic
+				if(gracze[found].IT!=-1) sbMssg.iKey[1]= STOLIK[gracze[found].IT].iPlayerCash[gracze[found].iMySpot];
+				else sbMssg.iKey[1]= gracze[found].iCash;
+				}
+			//else: zalozenie dane sa poprawnie wypelnione przez klienta
+			}
+			else// pobieramy dane o kartach
+			{
+				if(sbMssg.iKey[0] == -1) // info o kartach krupiera
+					{
+					sbMssg.iKey[1] = STOLIK[gracz->IT].iHouseCardCount;
+					for(int i=0;i<STOLIK[gracz->IT].iHouseCardCount;i++) sbMssg.iKey[i+2] = STOLIK[gracz->IT].iaHouseHand[i];
+					}
+				else// info o kartach gracza z id w ID_USR
+					{
+						int playah=sbMssg.ID_USR, found=-1, i;
+						for(i=0;i<MAX_CLIENTS;i++) if(gracze[i].ID == playah) found =i;
+						if(found>=0)
+							{		//w danych znalezionego gracza wybieramy informacje o stoliku i jego kartach
+								int t=gracze[found].IT;
+								sbMssg.iKey[i+1] = STOLIK[t].iPlayerCardCount[gracze[found].iMySpot];
+								for(int i=0;i<12;i++)	sbMssg.iKey[i+2] = STOLIK[t].iaPlayerHand[gracze[found].iMySpot][i];
+							}
+						//else: nie wymagane, dane powinny byc poprawne
+					}
+			}
+			sConversion(&sbMssg, cMessage);	
+			send( gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);
+		}
 	}//koniec glownego switcha watku
 
 	}//koniec nieskonczonej petli while dla switcha
@@ -971,25 +1026,26 @@ login= fopen("login.txt", "wt+");
 }
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////FUNKCJA ZASTEPUJE OBECNEGO GRACZA PRZY DANYM STOLIKU NA NASTEPNEGO////////////////////////////////////////////////////////////
+
 void vNextPlayer(int IT)
 {
 	STOLIK[IT].iActivePlayer++;
 	STOLIK[IT].iActivePlayer%=MAX_PLAYERS_PER_TABLE;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void vShuffle(bool baCardsDealt[]) {
 	for (int iIndex = 0; iIndex < 52; ++iIndex) {
 		baCardsDealt[iIndex] = false;
 	}
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void vEmptyHand(int  (*hand)[3][12], int index)
 {
 for(int i=0;i<12;i++) *hand[index][i]=0;
 }
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void vWywal(table *STOL, klient* player)
 {
 	if(STOL[player->IT].iActivePlayer== player->ID) vNextPlayer(player->IT);
@@ -1005,13 +1061,14 @@ void vWywal(table *STOL, klient* player)
 		player->iCash=300; // odnowienie standardowe zasobow pienieznych dla konta ktore spadlo ponizej limitu
 }
 }
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void	vRozeslijWynik(klient* player, int card)
 {
+
 	return;
 	
 }
-
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int GetNextCard(bool baCardsDealt[]) {
 	bool bCardDealt	= true;
 	int iNewCard	= -1;
@@ -1023,7 +1080,7 @@ int GetNextCard(bool baCardsDealt[]) {
 	} while (bCardDealt);
 	return iNewCard;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 int ScoreHand(int iaHand[], const int kiCardCount) {
 	int iAceCount	= 0;
 	int iScore		= 0;
@@ -1045,18 +1102,93 @@ int ScoreHand(int iaHand[], const int kiCardCount) {
 	}
 	return iScore;
 }
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//spr czy karty danego gracza pozwalaja mu kontynuowac gre
 int ifend(table STOL, klient* gracz)
 {
 	if(ScoreHand(STOL.iaPlayerHand[gracz->iMySpot], STOL.iPlayerCardCount[gracz->iMySpot] ) < 22) return 1; // nie przekoroczono 21, mozna dalej grac
 	else return 0;		//przekroczono 21, dla tego zawodnika gra sie wlasnie skonczyla
 }
 
-int vCzyKoniec(table STOL, klient* gracz)														//spr czy caly stolik zakonczyl rozgrywke?
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//spr czy caly stolik zakonczyl rozgrywke?
+int vCzyKoniec(table STOL, klient* gracz)														
 {
 	int p;
 for(int i=0;i>MAX_PLAYERS_PER_TABLE;i++)
 	p+= STOL.iActive[i];
 if(p) return 0;
 else return 1;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//uzupelniam karty krupiera
+void complete_house(table* STOL, int g)
+{		
+	for(int i=2;i<12;i++) STOL[g].iaHouseHand[i]=	GetNextCard(STOL[g].baCardsDealt);
+	STOL[g].iHouseCardCount=12;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// funkcja: oblicza ktory z graczy wygral a ktory przegral z krupierem a nastepnie wyniki graczy zapisuje do struktur im odpowiadajacym
+// i rozsyla informacje o wygranych po klientach
+void  vFindWinner(table* STOL, int IT, char* cMessage)
+{
+int k;
+int g[MAX_PLAYERS_PER_TABLE];
+
+k = ScoreHand(STOL[IT].iaHouseHand, STOL[IT].iHouseCardCount);
+for (int i=0;i<MAX_PLAYERS_PER_TABLE;i++) 
+	{
+		g[i] = ScoreHand(STOL[IT].iaPlayerHand[i], STOL[IT].iPlayerCardCount[i]);
+		//odnajdujemy odpowiedniego gracza
+		int o,u, tmp;
+		for(u=0;u<MAX_PLAYERS_PER_TABLE;u++)
+		for(o=0;o<MAX_CLIENTS;o++) if(gracze[o].ID ==STOL[IT].ID[i]) tmp = o;
+		Buffer RTRN;
+		RTRN.ID=7;
+		RTRN.iKey[0]=3;
+		RTRN.iKey[1]=0;
+		if(g[i]>k && g[i] < 22) //wygrana
+		{
+		gracze[tmp].iCash +=2* STOL[IT].iPlayerBid[i];	//	dodajemy wygrane
+		gracze[tmp].iScore +=STOL[IT].iPlayerBid[i];		//	oraz 
+		RTRN.iKey[1]=1;		
+		}
+	 sConversion(&RTRN, cMessage);
+	 send(gracze[tmp].sock  , cMessage, DEFAULT_BUFLEN, 0);
+
+	}
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void jump_next(table *STOL, klient *gracz, char* cMessage)
+{
+	
+	int next =0;
+	// po pierwsze sprawdzamy czy sa inni gracze ktorzy moga grac w ta runde:
+	for(int i=0;i<MAX_PLAYERS_PER_TABLE;i++) if(STOL[gracz->IT].iRoundMask[i]) next++;
+	if(next >1){ // sa inni gracze
+	//wyszukujemy kolejnego
+		int w;
+	do{
+		vNextPlayer(gracz->IT);																																//ustalamy id kandydata na kolejną rundę
+		for(int i=0;i<MAX_PLAYERS_PER_TABLE;i++) if(STOL[gracz->IT].iActivePlayer == STOL[gracz->IT].ID[i]) w=i;						
+	}
+	while(!(STOL[gracz->IT].iActivePlayer && STOL[gracz->IT].iRoundMask[w]));														//spr czy kandydat ma prawo do prowadzenia rundy
+	//w tym momencie wiemy, ktory gracz ma prawo do gry
+	
+	for(int i=0;i<MAX_CLIENTS;i++)  if(gracze[i].ID == STOL[gracz->IT].iActivePlayer) w= i; //odnajdujemy odpowiednia strukture w tablicy odpowiadajaca id aktywnego gracza
+
+	Buffer RTRN;
+	RTRN.ID=9;		// w przygotowanej strukturze wstawiamy informacje o oczekiwaniu na zapytanie silnika gry
+	 sConversion(&RTRN, cMessage);
+	 send(gracze[w].sock  , cMessage, DEFAULT_BUFLEN, 0); // i wysylamy wiadomosc do odpowiedniego kandydata
+}
+else
+{		//tylko  gracz przyporzadkowany bierzacemu procesowi moze podejmowac dzialania
+	Buffer RTRN;
+	RTRN.ID=9;		// w przygotowanej strukturze wstawiamy informacje o oczekiwaniu na zapytanie silnika gry
+	sConversion(&RTRN, cMessage);
+	send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0); // i wysylamy wiadomosc do samego siebie :)
+}
 }
