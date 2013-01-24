@@ -5,12 +5,18 @@ int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji
 char cChat[256];
 };
 
-
-
-Karol:
-w kliencie zawrzyjcie strukturę która będzie posiadała informacje o stole takie jak:
-
-ID graczy, ich Nazwy, Stawki (obstawiona oraz stan konta), zbior kart jakie ma kazdy lacznie z krupierem, suma punktow oraz aktywnie grajacy gracz
+Moje definicje globalne (Karol):
+############################################
+#define DEFAULT_BUFLEN					512
+#define DEFAULT_PORT						"27015"
+#define MAX_CLIENTS						12
+#define MAX_TABLES							4
+#define MAX_PLAYERS_PER_TABLE		3
+#define MAX_NAME_LEN					15
+#define MAX_PASS_LEN						40
+#define BEGGINERS_CASH					300
+#define MIN_BID								10
+############################################
 
 
 
@@ -70,9 +76,13 @@ GRA:
 --------------------------------------------------------------------------
 TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
 
-[ ID ]:	8	[ ID_USR ]  :   ID gracza ktorego karty chcesz pobrac (rowniez wlasne id)
+[ ID ]:	8	[ ID_USR ]  :   ID gracza ktorego dane chcesz pobrac (rowniez wlasne id)
+		[ iKey[0] ] :	0 - chcesz pobrac informacje o gotowce danego gracza
+				wartosc niezerowa - chcesz pobrac informacje o kartach danego gracza
 
-				0 jesli chcesz pobrac dane o kartach krupiera
+				jesli iKey[0] == -1 - chcesz pobrac dane o kartach krupiera
+
+				jesli iKey[0] > 0 id gracza ktorego karty chcesz pobrac
 				
 
 --------------------------------------------------------------------------
@@ -104,7 +114,7 @@ w przypadku logowania:
 		
 		[ iKey[1] ] :   ID uzytkownika dla konta za pomoca ktorego sie logowales/as
 
-		[ iKey[2] ] :	Wysokosc srodkow na koncie gracza	//TUTAJ SERWER AUTOMATYCZNIE PRZYJMUJE ZE GRACZ MOZE MIEC MINIMUM 1000 kredytow
+		[ iKey[2] ] :	Wysokosc srodkow na koncie gracza	//TUTAJ SERWER AUTOMATYCZNIE PRZYJMUJE ZE GRACZ MOZE MIEC MINIMUM 300 kredytow
 
 w przypadku wylogowywania:
 serwer sprawdza czy uzytkownik ktory sie wylogowywal bral udzial w jakiejs grze, jesli tak to rozsyla informacje o tym, ze gracz opuscil stol, patrz OPUSZCZANIE STOLU
@@ -124,9 +134,12 @@ JESLI iKey[0] == 0
 		UWAGA! Zalozenie: jesli przy ktoryms miejscu przy stoliku nie siedzi gracz, to nick nalezy po prostu do pierwszego kolejnego przy ktorym siedzi.
 JESLI iKey[0] == 1
 
-		[ iKey[1-10] ]:	punkty 10 najlepszych graczy (miejsce zaleznym od indeksu iKey, im nizszy indeks, tym gracz lepszy) 
+		[ iKey[1-5] ]:	id 5 najlepszych graczy (miejsce zaleznym od indeksu iKey, im nizszy indeks, tym gracz lepszy) 
+
+		[ iKey[6-10] ]:	punkty 5 najlepszych graczy (miejsce zaleznym od indeksu iKey, im nizszy indeks, tym gracz lepszy) 
 		
-		[ cChat[ ] ] :	począwszy od pola 0 az do wyczerpania limitu oddzielone spacjami nicki 10 najlepszych graczy 
+		[ cChat[ ] ] :	począwszy od pola 0 az do wyczerpania limitu oddzielone spacjami nicki 5 najlepszych graczy 
+
 
 JESLI iKey[0] == 2
 
@@ -165,8 +178,8 @@ GRA:
 
 
 
-		jesli iKey[0] == 1 lub 2, serwer odsyla w iKey[1] wartosc karty ktora zalosowales/as
-		jesli iKey[0] == 3 to w iKey[1] jest informacja czy wygrales czy przegrales (1 wygrana, 0 porazka)
+		jesli iKey[0] bylo niezerowe, serwer odsyla w iKey[1] wartosc karty ktora zalosowales/as
+		jesli iKey[0] == 3 to w iKey[2] jest informacja czy wygrales czy przegrales (1 wygrana, 0 porazka)
 
 
 --------------------------------------------------------------------------
@@ -174,8 +187,18 @@ TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
 
 [ ID ]:	8	[ ID_USR ]  :   ID gracza ktorego karty chcesz pobrac (rowniez wlasne id)
 
-				iKey[0] - ilosc pobranych przez gracza z ID w ID_USR kart
-				iKey[1-12] : wartosci kolejnych pobranych przez niego/nia kart
-				
+		[ iKey[0] ] :	0 - chcesz pobrac informacje o gotowce danego gracza
+				wartosc niezerowa - chcesz pobrac informacje o kartach danego gracza
+		
+		jesli iKey[0] == 0 	to w iKey[1] serwer zwraca wysokosc konta danego gracza		
+	
+		jesli iKey[0] ==-1 	to w iKey[1] - ilosc pobranych przez krupiera kart		// w praktyce krupier pobiera na poczatku rozgrywki 2 karty
+					oraz iKey[2-14] - wartosci kolejnych kart (o ile istnieja)	// a pozostale po tym jak pobrali wszyscy pozostali gracze
+					dodatkowo: wartosc ID_USR w przypadku gdy iKey[0]==-1 JEST NIEUSTALONA!	(w koncu pobierasz od krupiera..)				
+
+
+		jesli iKey[0] >0 	to w iKey[1] - ilosc pobranych przez gracza kart
+					oraz iKey[2-14] - wartosci kolejnych kart (o ile istnieja)	
+
 --------------------------------------------------------------------------
 
