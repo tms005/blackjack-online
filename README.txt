@@ -12,9 +12,6 @@ w kliencie zawrzyjcie strukturę która będzie posiadała informacje o stole ta
 
 ID graczy, ich Nazwy, Stawki (obstawiona oraz stan konta), zbior kart jakie ma kazdy lacznie z krupierem, suma punktow oraz aktywnie grajacy gracz
 
-UWAGA: Zmiana z : 23 stycznia
-Maksymalna ilosc stolow: 4
-Maksymalna ilosc graczy przy stole: 3
 
 
 
@@ -66,9 +63,18 @@ OPUSZCZENIE GRY:
 --------------------------------------------------------------------------
 GRA:
 
-[ ID ]:	7	
+[ ID ]:	7	[ iKey[0] ] :	0 - pasuj
+				1 - graj
+				2 - podwoj (tylko w pierwszej rundzie )
 
-// DO AKTUALIZACJI
+--------------------------------------------------------------------------
+TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
+
+[ ID ]:	8	[ ID_USR ]  :   ID gracza ktorego karty chcesz pobrac (rowniez wlasne id)
+
+				0 jesli chcesz pobrac dane o kartach krupiera
+				
+
 --------------------------------------------------------------------------
 
 
@@ -91,8 +97,10 @@ UTWORZENIE KONTA:
 LOGOWANIE/WYLOGOWANIE:
 
 w przypadku logowania:
+
 [ ID ]:	2	[ iKey[0] ] :	1 - zalogowales/as sie  
-                           2 - bledne haslo lub nazwa uzytkownika
+				2 - serwer zapelniony, nie udalo sie zalogowac 
+				3 - bledne haslo lub nazwa uzytkownika
 		
 		[ iKey[1] ] :   ID uzytkownika dla konta za pomoca ktorego sie logowales/as
 
@@ -129,9 +137,8 @@ JESLI iKey[0] == 2
 PRZYLACZENIE SIE DO STOLU:
 
 [ ID ]:	4	[ ID_USR ]:	0 - dolaczyles/as do stolu i wszystko jest ok
-                        -1 - stolik pelny, nie mozesz sie przylaczyc
-				 wartosc niezerowa - do stolu dolacza gracz o podanym w tym polu ID
-		Jesli ID_USR dodatnie:
+				wartosc niezerowa - do stolu dolacza gracz o podanym w tym polu ID
+		Jesli ID_USR niezerowe:
 
 		[ cChat ]:	nazwa danego gracza zakonczone spacja lub innym bialym znakiem
 
@@ -139,26 +146,36 @@ PRZYLACZENIE SIE DO STOLU:
 OPUSZCZENIE DANEGO STOLU
 
 [ ID ]:	5	[ ID_USR ] :	wartosc niezerowa - uzytkownik o takim ID opuscil stol.
-		[ cChat ]:	nazwa gracza opuszczającego zakonczone spacja lub innym bialym znakiem
+		[ cChat ]  :	nazwa gracza opuszczającego zakonczone spacja lub innym bialym znakiem
 
 --------------------------------------------------------------------------
 OPUSZCZENIE GRY:
 
 [ ID ]:	6	[ ID_USR ] :	ID gracza ktory opuscil gre (praktycznie to samo co wylogowanie)
-		[ cChat ]:	nazwa gracza opuszczającego zakonczone spacja lub innym bialym znakiem
+		[ cChat ]  :	nazwa gracza opuszczającego zakonczone spacja lub innym bialym znakiem
 
 --------------------------------------------------------------------------
 GRA:
 
-[ ID ]:	7	
+[ ID ]:	7	[ iKey[0] ] :	0 - pasuj
+				1 - graj
+				2 - podwoj (tylko w pierwszej rundzie )
+				3 - rozgrywka zakonczona - tutaj nalezy pobrac dane o kartach krupiera(!) bo dopiero po zakonczeniu dobierania przez wszystkich
+				    graczy sa one losowane 
 
-// DO AKTUALIZACJI
+
+
+		jesli iKey[0] bylo niezerowe, serwer odsyla w iKey[1] wartosc karty ktora zalosowales/as
+		jesli iKey[0] == 3 to w iKey[2] jest informacja czy wygrales czy przegrales (1 wygrana, 0 porazka)
+
+
 --------------------------------------------------------------------------
+TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
 
-	7 - 	       : ID_USR - id uzytkownika ktory wyslal zapytanie (pomimo ze jeden klient wysyla zadanie do serwera, to serwer wysyla odpowiedz do wszystkich klientow)
-		       : 	- iKey[0] - zapytanie uzytkownika jakie otrzymal serwer
-		       :        - iKey[1] - wartosc dobranej karty o ile w iKey[0] jest wartosc niezerowa)
+[ ID ]:	8	[ ID_USR ]  :   ID gracza ktorego karty chcesz pobrac (rowniez wlasne id)
 
-		       
-
+				iKey[0] - ilosc pobranych przez gracza z ID w ID_USR kart
+				iKey[1-12] : wartosci kolejnych pobranych przez niego/nia kart
+				
+--------------------------------------------------------------------------
 
