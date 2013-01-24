@@ -165,8 +165,8 @@ GRA:
 
 
 
-		jesli iKey[0] bylo niezerowe, serwer odsyla w iKey[1] wartosc karty ktora zalosowales/as
-		jesli iKey[0] == 3 to w iKey[2] jest informacja czy wygrales czy przegrales (1 wygrana, 0 porazka)
+		jesli iKey[0] == 1 lub 2, serwer odsyla w iKey[1] wartosc karty ktora zalosowales/as
+		jesli iKey[0] == 3 to w iKey[1] jest informacja czy wygrales czy przegrales (1 wygrana, 0 porazka)
 
 
 --------------------------------------------------------------------------
