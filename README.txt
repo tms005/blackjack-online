@@ -145,6 +145,7 @@ OPUSZCZENIE DANEGO STOLU
 OPUSZCZENIE GRY:
 
 [ ID ]:	6	[ ID_USR ] :	ID gracza ktory opuscil gre (praktycznie to samo co wylogowanie)
+		[ cChat ]:	nazwa gracza opuszczającego zakonczone spacja lub innym bialym znakiem
 
 --------------------------------------------------------------------------
 GRA:
