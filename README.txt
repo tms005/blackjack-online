@@ -201,4 +201,9 @@ TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
 					oraz iKey[2-14] - wartosci kolejnych kart (o ile istnieja)	
 
 --------------------------------------------------------------------------
+INFORMACJA O TYM, ZE SERWER OCZEKUJE NA PODJECIE DECYZJI WZG KOLEJNEJ TURY GRY
 
+[ ID ]: 9
+
+Serwer wysyla ta informacje do klienta, kiedy rozpoczyna sie jego runda.
+--------------------------------------------------------------------------
