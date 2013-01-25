@@ -15,7 +15,7 @@
 
 
 #define DEFAULT_BUFLEN					512
-#define DEFAULT_PORT						"27015"
+#define DEFAULT_PORT						"2000"
 #define MAX_CLIENTS						12
 #define MAX_TABLES							4
 #define MAX_PLAYERS_PER_TABLE		3
@@ -110,30 +110,34 @@ void  vFindWinner(table* STOL, int IT, char* cMessage);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	DWORD WINAPI iSilnikGry(LPVOID ctx)
 {
-	int idStolik = -1;		// JEST TO INDEX WSKAZUJĄCY POLA W TABLICY STOLIK NALEŻĄCE DO GRACZA POWOŁUJĄCEGO WĄTEK
+
 	int ret;					// tutaj przechowujemy uniwersalna zmienna zwracajaca wyniki
 	int iMode;				// aktualnie wybierane przez gracza dzialanie
 	
 	klient * gracz=(klient*)ctx;
-	
+	cout<<"Utworzono watek dla nowego polaczenia (Gniazdo:"<< gracz->sock<<endl;
 
 	char cMessage[512];
 	Buffer sbMssg; 
 	while(iAktywny)
 	{
 	  ret = recv( gracz->sock, cMessage, 512, 0);
-	   rConversion(&sbMssg, cMessage);				 // za kazdym odebraniem wiadomosci z klienta tlumacze ja z powrotem do postaci ramki struktury
+
 	   if(ret == 0)   //polaczenie zamkniete po stronie klienta
 		{
-		if(gracz->ID != -1) //czyszczenie ew. danych
+			cout<<"Klient: ";
+			if(gracz->ID) cout<<gracz->ID ;
+			else cout<< "[brak id klienta]";
+			cout<< " zamknal polaczenie z serwerem"<<endl;
+		if(gracz->ID != 0) //czyszczenie ew. danych
 			{
 			if(gracz->IT != -1)
 					{
-					if(idStolik!=-1)
+						if(gracz->iMySpot)
 							{
-								STOLIK[gracz->IT].ID[idStolik]=0;
-								STOLIK[gracz->IT].iPlayerBid[idStolik]=0;
-								STOLIK[gracz->IT].iPlayerCardCount[idStolik]=0;
+								STOLIK[gracz->IT].ID[gracz->iMySpot]=0;
+								STOLIK[gracz->IT].iPlayerBid[gracz->iMySpot]=0;
+								STOLIK[gracz->IT].iPlayerCardCount[gracz->iMySpot]=0;
 								// tutaj jeszcze zaktualizowac pole next oraz active o ile gracz byl jednym z tych graczy
 						}			
 				}
@@ -141,6 +145,8 @@ void  vFindWinner(table* STOL, int IT, char* cMessage);
 			return 0;
 	   }
 	
+	   rConversion(&sbMssg, cMessage);				 // za kazdym odebraniem wiadomosci z klienta tlumacze ja z powrotem do postaci ramki struktury
+	   cout<<"Otrzymalem wiadomosc:"<<sbMssg.ID<<endl;
 	iMode=	iTranslate(&sbMssg); // tutaj decydujemy co bedzie sie dzialo 
 switch(iMode)
 		{
@@ -761,7 +767,7 @@ int __cdecl main(void)
   
 
   ///////////////////// // TUTAJ STARTUJEMY Z WINSOCKEM/////////////////////////////////
-    iResult = WSAStartup(MAKEWORD(2,2), &wsaData);
+    iResult = WSAStartup(MAKEWORD(2,1), &wsaData);
     if (iResult != 0) {
         printf("Wystąpił błąd modułu WSAStartup : %d\n", iResult);
         return 1;
@@ -793,7 +799,10 @@ int __cdecl main(void)
     // Następnie je wiążemy 
     iResult = bind( ListenSocket, result->ai_addr, (int)result->ai_addrlen);
     if (iResult == SOCKET_ERROR) {
+		
         printf("Błąd wiązania gniazda: %d\n", WSAGetLastError());
+
+					system("PAUSE");
         freeaddrinfo(result);
         closesocket(ListenSocket);
         WSACleanup();
@@ -805,15 +814,18 @@ int __cdecl main(void)
 	// teraz oczekujemy na połączenie z klientami// od tad nalezy rozwazac model aplikacji: stoliki
 	while(SERVER_ON)
 	{
+		cout<<"\n";
 		if (iIfFreeSlot(active_players)){
     iResult = listen(ListenSocket, SOMAXCONN);
     if (iResult == SOCKET_ERROR) 
 	{
         printf("Błąd nasłuchującego gniazda: %d\n", WSAGetLastError());
+
         closesocket(ListenSocket);
         WSACleanup();
         return 1;
     }
+			cout<<"";
 	int free_slot = iFindFreeSlot(active_players);
 	active_players[free_slot]=1;
     // Teraz akceptujemy transmisję
@@ -821,13 +833,15 @@ int __cdecl main(void)
     if (gracze[active_players[free_slot]].sock == INVALID_SOCKET) {
         active_players[free_slot]=0;
 		printf("Nie powiodła się akceptacja transmisji: %d\n", WSAGetLastError());
+		
         closesocket(ListenSocket);
         WSACleanup();
         return 1;
-    }// istartujemy nowy watek:
+    }// istartujemy nowy watek:]
+			cout<<"A";
 	gracze[free_slot].thread = CreateThread (NULL, 0, iSilnikGry, (LPVOID)&gracze[free_slot], 0, NULL);
 	if(!gracze[free_slot].thread)
-			{
+			{		
 	            gracze[free_slot].sock = INVALID_SOCKET;
                 cout << "Utworzenie watku dla klienta nie powiodlo sie." << endl;
 			}
@@ -870,6 +884,7 @@ void sbMssgCLEAR(Buffer* x)
 	for(int i=0;i<16;i++)	x->iKey[i] =0;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void sConversion(Buffer *sbMssg, char cMessage[])
 {
@@ -882,6 +897,7 @@ for(k=18;k<275;k++) cMessage[k] = sbMssg->cChat[k-18];
 }
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void rConversion(Buffer *sbMssg, char *cMessage)
 {
 sbMssg->ID =(int)cMessage[0];
@@ -893,6 +909,7 @@ for(k=18;k<275;k++) sbMssg->cChat[k-18]=  cMessage[k];
 
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 short iGenerujIdGracza(FILE* name)
 {
 	vector<int> tab;
