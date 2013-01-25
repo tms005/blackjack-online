@@ -16,7 +16,7 @@ HWND hStolChat;
 
 struct Buffer {
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
-int ID_USR; // nadawany przez serwer klucz dla ka¿dego po³¹czonego z serwerem u¿ytkownika
+int ID_USR; // nadawany przez serwer klucz dla kaÂ¿dego poÂ³Â¹czonego z serwerem uÂ¿ytkownika
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji
 char cChat[256];
 };
@@ -29,45 +29,36 @@ int iKonto;//stan konto klienta
 char cKarty[4];//karty wszystkich graczy wlacznie z krupierem pod indeksem 0
 };
 
-void pack(Buffer buff, char (&ref)[512]) //pakowanie - klient
+void pack(Buffer buff, char ref[512]) //pakowanie - klient
 {
-    unsigned int i,j=0;
-
-     ref[0]=buff.ID;
-     ref[1]=buff.ID_USR;
-
-    for(i=2;i<sizeof(buff.iKey);i++)
+     int i,j=0;
+        ref[0]=buff.ID;
+        ref[1]=buff.ID_USR;
+    for(i=2;i<18;i++)
     {
-        ref[i]=buff.iKey[j];
-        j++;
+        ref[i]=buff.iKey[i-2];
     }
-
-    ref[i]=SPACE;
-    i++;
-
-    for(j=0;j<sizeof(buff.cChat);i++)
+    for(i=18;i<275;i++)
     {
-        ref[i]=buff.cChat[j];
-        j++;
+        ref[i]=buff.cChat[i-18];
     }
 }
 
+
+
 Buffer unpack(char ref[512]) //odpakowanie - klient
 {
-     unsigned int i,j=0;
+     int i;
      Buffer tempbuff;
-
-        tempbuff.ID=ref[0];
-        tempbuff.ID_USR=ref[1];
-
-    for(i=2;i<sizeof(tempbuff.iKey);i++)
+        tempbuff.ID=(int)ref[0];
+        tempbuff.ID_USR=(int)ref[1];
+    for(i=2;i<18;i++)
     {
-        tempbuff.iKey[j]=ref[i]; j++;
-    } i++;
-
-    for(j=0;j<sizeof(tempbuff.cChat);i++)
+        tempbuff.iKey[i-2]=(int)ref[i];
+    }
+    for(i=18;i<275;i++)
     {
-        tempbuff.cChat[j]=ref[i]; j++;
+        tempbuff.cChat[i-18]=ref[i];
     }
 return tempbuff;
 }
