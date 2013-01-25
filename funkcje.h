@@ -32,11 +32,11 @@ char cKarty[4];//karty wszystkich graczy wlacznie z krupierem pod indeksem 0
 void pack(Buffer buff, char ref[512]) //pakowanie - klient
 {
      int i,j=0;
-        ref[0]=buff.ID;
-        ref[1]=buff.ID_USR;
+        ref[0]=(char)buff.ID;
+        ref[1]=(char)buff.ID_USR;
     for(i=2;i<18;i++)
     {
-        ref[i]=buff.iKey[i-2];
+        ref[i]=(char)buff.iKey[i-2];
     }
     for(i=18;i<275;i++)
     {
