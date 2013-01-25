@@ -4,8 +4,11 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include <winsock2.h>
 
 #include "funkcje.h"
+
+SOCKET  sClient;
 
 extern int stolyWinMain();
 extern HWND stolyOkno;
@@ -17,7 +20,7 @@ HWND hEdit;
 CONST CHAR ClassName[]="GameWindow";
 CONST CHAR MenuName[]="Menu_Window";
 
-MSG msgs; //struktura na komunikatÃ³w
+MSG msgs; //struktura na komunikatĂÂłw
 HINSTANCE hInstMain;
 
 HWND Okno;
@@ -35,175 +38,51 @@ Stol pierwszy, drugi, trzeci, czwarty;
 
 char pakiet[512] = {0};
 char cKartaStol[256] = {0};
-int klientsrodki=0,klientstol=0,j=0,i=0,dg=0,dn=0,k=0;
+int klientsrodki=0,klientstol=0,j=0,i=0,dg=0,dn=0,k=0,x=0;
 
-LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
+DWORD WINAPI NetThread(LPVOID ctx)
 {
-        switch(msg)
-        {
-         case WM_CREATE:
-         {
-             stolyWinMain();
-             stolWinMain();
-             break;
-         }
-         case WM_DESTROY:
-         {
-            closesocket(sock);
-            WSACleanup();
-            sbuffer.ID=6;
-            pack(sbuffer,pakiet);
-            send(sock,pakiet,sizeof(pakiet),0);
-            PostQuitMessage(0);
-            break;
-         }
-         case WM_COMMAND:
-         {
-             if((HWND)lPar==hLogin)
-             {
-                EnableWindow(hLogin, false);
-                EnableWindow(hRejestr, false);
-                CHAR cLogin[20];
-                GetWindowText(hNickWpisz, cLogin, 20);
-                CHAR cPass[20];
-                GetWindowText(hPassWpisz, cPass, 20);
-                sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
-                przepiszChary(sbuffer.cChat, cLogin);
-                sbuffer.ID=2;
-                pack(sbuffer,pakiet);
-                send(sock,pakiet,sizeof(pakiet),0);
-             }
-             else if((HWND)lPar==hRejestr)
-             {
-                EnableWindow(hLogin, false);
-                EnableWindow(hRejestr, false);
-                CHAR cLogin[20];
-                GetWindowText(hNickWpisz, cLogin, 20);
-                CHAR cPass[20];
-                GetWindowText(hPassWpisz, cPass, 20);
-                sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
-                przepiszChary(sbuffer.cChat, cLogin);
-                sbuffer.ID=1;
-                pack(sbuffer,pakiet);
-                send(sock,pakiet,sizeof(pakiet),0);
-             }
-             else if(wPar==10)
-             {
-                 //ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(stolyOkno,SW_HIDE);
-                 ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(Okno,SW_SHOW);
-             }
-             else if(wPar==11)
-             {
-                 ShowWindow(Okno,SW_HIDE);
-                 //ShowWindow(stolyOkno,SW_HIDE);
-                 ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(stolyOkno,SW_SHOW);
-             }
-             else if(wPar==12)
-             {
-                 ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(stolyOkno,SW_HIDE);
-                 ShowWindow(stolOkno,SW_HIDE);
-             }
-             else if(wPar==13)
-             {
-                 ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(stolyOkno,SW_HIDE);
-                 //ShowWindow(stolOkno,SW_HIDE);
-                 ShowWindow(stolOkno,SW_SHOW);
-             }
-             else if(wPar==14)
-             {
-                 ShowWindow(Okno,SW_HIDE);
-                 ShowWindow(stolyOkno,SW_HIDE);
-                 ShowWindow(stolOkno,SW_HIDE);
-                 //ShowWindow(rejestrOkno,SW_HIDE);
-             }
-             break;
-         }
-         default:
-         return DefWindowProc(hwnd,msg,wPar,lPar);       //domyÅlna obsÂ³uga reszty komunikatÃ³w
-        }
-        return 0;
-}
+    SOCKET* sClientThread=(SOCKET*)ctx;
+    int     ret;
 
-int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow)
-{
-    WNDCLASSEX wc;
+    // A delay
+    Sleep(1000);
 
-    wc.hInstance = hInst;                                         //uchwyt programu
-    hInstMain=hInst;
-    wc.lpszClassName = ClassName;                                 //nazwa klasy. przekazanie globalne.
-    wc.lpfnWndProc = WndProc;                                     //
-    wc.style = 0;                                                 //
-    wc.cbSize = sizeof (WNDCLASSEX);                              //rozmiar klasy w bajtach w pamiÃªci
-    wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);                  //uchwyt ikony okna
-    wc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);                //uchwyt maÂ³ej ikony okna
-    wc.hCursor = LoadCursor (NULL, IDC_ARROW);                    //uchwyt kursora - sÂ³uÂ¿y do zaÂ³adowania kursora tzw. "strzaÂ³ki"
-    wc.lpszMenuName = "Menu_Window";                                          //nazwa menu
-    wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 0);               //uchwyt do "pÃªdzla" z tÂ³em
-    wc.cbClsExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna klasy
-    wc.cbWndExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna utworzona z tej klasy
-
-    if(RegisterClassEx(&wc)==0) return 0;
-    Okno=CreateWindowEx(0,ClassName,"CzarnyJacek",WS_OVERLAPPEDWINDOW|WS_VISIBLE,80,50,600,500,0,0,hInst,0);
-
-    hLogo=CreateWindowEx(0,"STATIC","Logowanie",WS_CHILD|WS_VISIBLE,280,60,150,20,Okno,0,hInst,0);
-    hNick=CreateWindowEx(0,"STATIC","Login: ",WS_CHILD|WS_VISIBLE,160,110,150,20,Okno,0,hInst,0);
-    hNickWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,220,110,200,20,Okno,0,hInst,0);
-
-    hPass=CreateWindowEx(0,"STATIC","Haslo:  ",WS_CHILD|WS_VISIBLE,160,170,50,20,Okno,0,hInst,0);
-    hPassWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE|ES_PASSWORD,220,170,200,20,Okno,0,hInst,0);
-
-    hLogin=CreateWindowEx(0,"BUTTON","Logowanie",WS_CHILD|WS_VISIBLE,265,230,100,20,Okno,0,hInst,0);
-    hRejestr = CreateWindowEx(0,"BUTTON","Rejestracja",WS_VISIBLE|WS_CHILD,265,270,100,20,Okno,0,hInst,0);
-
-    int RetVal = 0;
-        WSAData wsaData;
-        WORD DllVersion = MAKEWORD(2,1);
-        RetVal = WSAStartup(DllVersion, &wsaData);
-        if(RetVal != 0)
-        {
-                MessageBoxA(NULL, "Winsock startup failed", "Error", MB_OK | MB_ICONERROR);
-                exit(1);
-        }
-
-        sock = socket(AF_INET, SOCK_STREAM, 0);
-        saddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-        saddr.sin_port        = htons(1234);
-        saddr.sin_family      = AF_INET;
-
-    if ( connect(sock, (sockaddr*)&saddr, sizeof(sockaddr)) == SOCKET_ERROR )
+    // Receive data
+    for(;;)
     {
-        MessageBox(0,"Blad polaczenia z serwem","Ha!",MB_OK);
-        sock = 0;
-        return -1;
+    memset(pakiet,0,512);
+    ret = recv(*sClientThread, pakiet, 512, 0);
+    if (ret == SOCKET_ERROR)
+    {
+       MessageBox(0, "recv failed", "Error", 0);
     }
-
-    while(GetMessage(&msgs,0,0,0)) //pÃªtla obsÂ³ugujÂ¹ca wymianÃª komunikatÃ³w
-    {
-        TranslateMessage(&msgs); //funkcja tÂ³umaczÂ¹ca sygnaÂ³y z klawiatury na odpowiednie komunikaty systemowe
-        DispatchMessage(&msgs); //funkcja przetwarzajÂ¹ca komunikaty systemowe przez procedury obsÂ³ugi
-
-        if(recv(sock,pakiet,sizeof(pakiet),0))
+    else
             {
 		    sbuffer=unpack(pakiet);
 		    switch(sbuffer.ID)
                 {
                 case 0: //WIADOMOSC CZATU:
-                        switch(sbuffer.iKey[0])
-                            {
-                            case 1: //globalny
-                                    SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
-                                break;
-                            case 2: //lokalny
-                                    SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
-                                break;
-                            default:
-                                    MessageBox(0,"Wystapil nieoczekiwany blad! case 0","Ha!",MB_OK);
-                            }
+                        if(sbuffer.ID_USR==klient.ID_USR)
+                        {
+                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );//bo po co rozkminiac gdzie wyswietlic xd
+                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
+                        }
+                        else
+                        {
+                        for(i=0;i<3;i++)
+                            if(sbuffer.ID_USR==pierwszy.iIdGraczy[i]) x=1;
+                        for(i=0;i<3;i++)
+                            if(sbuffer.ID_USR==drugi.iIdGraczy[i]) x=2;
+                        for(i=0;i<3;i++)
+                            if(sbuffer.ID_USR==pierwszy.iIdGraczy[i]) x=3;
+                        for(i=0;i<3;i++)
+                            if(sbuffer.ID_USR==pierwszy.iIdGraczy[i]) x=4;
+                        if(klientstol==x)
+                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
+                        else if(x==0)
+                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
+                        }
                     break;
 
                 case 1: //UTWORZENIE KONTA:
@@ -390,7 +269,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
                             pobierzListyStolyOkno();
                             pobierzListyStol();
                     break;
-/*
+
                 case 7: //gramy
                         switch(sbuffer.iKey[0])
                             {
@@ -403,15 +282,204 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
                             case 2: //ktos podbil stawke (sa stawki? o_O) dobieramy tez karte automatycznie
                                     PrintCard(sbuffer.iKey[1],cKartaStol);//trzeba dopisac komu ma przydzielac tylko jak jak nie ma polaczenia nicki-id_usr
                                 break;
+                            case 3: //ktos podbil stawke (sa stawki? o_O) dobieramy tez karte automatycznie
+                                    PrintCard(sbuffer.iKey[1],cKartaStol);//trzeba dopisac komu ma przydzielac tylko jak jak nie ma polaczenia nicki-id_usr
+                                break;
                             default:
                                     MessageBox(0,"Wystapil nieoczekiwany blad! case 8","Ha!",MB_OK);
                             }
                     break;
-*/
+
                 default:
                         MessageBox(0,"Wystapil nieoczekiwany blad! caly","Ha!",MB_OK);
                 }
             }
+    }
+
+    closesocket(sClient);
+}
+
+
+LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
+{
+        switch(msg)
+        {
+         case WM_CREATE:
+         {
+             stolyWinMain();
+             stolWinMain();
+             break;
+         }
+         case WM_DESTROY:
+         {
+            sbuffer.ID=6;
+            pack(sbuffer,pakiet);
+            send(sock,pakiet,sizeof(pakiet),0);
+            closesocket(sock);
+            WSACleanup();
+            PostQuitMessage(0);
+            break;
+         }
+         case WM_COMMAND:
+         {
+             if((HWND)lPar==hLogin)
+             {
+                EnableWindow(hLogin, false);
+                EnableWindow(hRejestr, false);
+                CHAR cLogin[20];
+                GetWindowText(hNickWpisz, cLogin, 20);
+                CHAR cPass[20];
+                GetWindowText(hPassWpisz, cPass, 20);
+                sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
+                przepiszChary(sbuffer.cChat, cLogin);
+                sbuffer.ID=2;
+                pack(sbuffer,pakiet);
+                send(sock,pakiet,sizeof(pakiet),0);
+             }
+             else if((HWND)lPar==hRejestr)
+             {
+                EnableWindow(hLogin, false);
+                EnableWindow(hRejestr, false);
+                CHAR cLogin[20];
+                GetWindowText(hNickWpisz, cLogin, 20);
+                CHAR cPass[20];
+                GetWindowText(hPassWpisz, cPass, 20);
+                sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
+                przepiszChary(sbuffer.cChat, cLogin);
+                sbuffer.ID=1;
+                pack(sbuffer,pakiet);
+                send(sClient, pakiet, strlen(pakiet), 0);
+                //send(sock,pakiet,sizeof(pakiet),0);
+             }
+             else if(wPar==10)
+             {
+                 //ShowWindow(Okno,SW_HIDE);
+                 ShowWindow(stolyOkno,SW_HIDE);
+                 ShowWindow(stolOkno,SW_HIDE);
+                 ShowWindow(Okno,SW_SHOW);
+             }
+             else if(wPar==11)
+             {
+                 ShowWindow(Okno,SW_HIDE);
+                 //ShowWindow(stolyOkno,SW_HIDE);
+                 ShowWindow(stolOkno,SW_HIDE);
+                 ShowWindow(stolyOkno,SW_SHOW);
+             }
+             else if(wPar==12)
+             {
+                 ShowWindow(Okno,SW_HIDE);
+                 ShowWindow(stolyOkno,SW_HIDE);
+                 ShowWindow(stolOkno,SW_HIDE);
+             }
+             else if(wPar==13)
+             {
+                 ShowWindow(Okno,SW_HIDE);
+                 ShowWindow(stolyOkno,SW_HIDE);
+                 //ShowWindow(stolOkno,SW_HIDE);
+                 ShowWindow(stolOkno,SW_SHOW);
+             }
+             else if(wPar==14)
+             {
+                 ShowWindow(Okno,SW_HIDE);
+                 ShowWindow(stolyOkno,SW_HIDE);
+                 ShowWindow(stolOkno,SW_HIDE);
+                 //ShowWindow(rejestrOkno,SW_HIDE);
+             }
+             break;
+         }
+         default:
+         return DefWindowProc(hwnd,msg,wPar,lPar);       //domyĂ…Â“lna obsĂ‚Âługa reszty komunikatĂÂłw
+        }
+        return 0;
+}
+
+int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow)
+{
+    WNDCLASSEX wc;
+
+    wc.hInstance = hInst;                                         //uchwyt programu
+    hInstMain=hInst;
+    wc.lpszClassName = ClassName;                                 //nazwa klasy. przekazanie globalne.
+    wc.lpfnWndProc = WndProc;                                     //
+    wc.style = 0;                                                 //
+    wc.cbSize = sizeof (WNDCLASSEX);                              //rozmiar klasy w bajtach w pamiĂÂŞci
+    wc.hIcon = LoadIcon (NULL, IDI_APPLICATION);                  //uchwyt ikony okna
+    wc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);                //uchwyt maĂ‚Âłej ikony okna
+    wc.hCursor = LoadCursor (NULL, IDC_ARROW);                    //uchwyt kursora - sĂ‚ÂłuĂ‚Âży do zaĂ‚Âładowania kursora tzw. "strzaĂ‚Âłki"
+    wc.lpszMenuName = "Menu_Window";                                          //nazwa menu
+    wc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 0);               //uchwyt do "pĂÂŞdzla" z tĂ‚Âłem
+    wc.cbClsExtra = 0;                                            //dodatkowa pamiĂÂŞĂÂ¦ dla okna klasy
+    wc.cbWndExtra = 0;                                            //dodatkowa pamiĂÂŞĂÂ¦ dla okna utworzona z tej klasy
+
+    if(RegisterClassEx(&wc)==0) return 0;
+    Okno=CreateWindowEx(0,ClassName,"CzarnyJacek",WS_OVERLAPPEDWINDOW|WS_VISIBLE,80,50,600,500,0,0,hInst,0);
+
+    hLogo=CreateWindowEx(0,"STATIC","Logowanie",WS_CHILD|WS_VISIBLE,280,60,150,20,Okno,0,hInst,0);
+    hNick=CreateWindowEx(0,"STATIC","Login: ",WS_CHILD|WS_VISIBLE,160,110,150,20,Okno,0,hInst,0);
+    hNickWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE,220,110,200,20,Okno,0,hInst,0);
+
+    hPass=CreateWindowEx(0,"STATIC","Haslo:  ",WS_CHILD|WS_VISIBLE,160,170,50,20,Okno,0,hInst,0);
+    hPassWpisz=CreateWindowEx(WS_EX_CLIENTEDGE,"EDIT",0,WS_CHILD|WS_VISIBLE|ES_PASSWORD,220,170,200,20,Okno,0,hInst,0);
+
+    hLogin=CreateWindowEx(0,"BUTTON","Logowanie",WS_CHILD|WS_VISIBLE,265,230,100,20,Okno,0,hInst,0);
+    hRejestr = CreateWindowEx(0,"BUTTON","Rejestracja",WS_VISIBLE|WS_CHILD,265,270,100,20,Okno,0,hInst,0);
+
+    WSADATA       wsd;
+    if (WSAStartup(MAKEWORD(2,2), &wsd) != 0)
+    {
+        MessageBox(0, "Can't load WinSock", "Error", 0);
+        return 0;
+    }
+
+    struct sockaddr_in server;
+    struct hostent    *host = NULL;
+    char  szServerName[1024];
+
+    strcpy(szServerName, "127.0.0.1");
+
+    // Create a socket
+    sClient = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if (sClient == INVALID_SOCKET)
+    {
+       MessageBox(0, "Can't create socket", "Error", 0);
+       return 1;
+    }
+    // Fill the structure with the server address and
+    // the port number
+    server.sin_family = AF_INET;
+    server.sin_port = htons(2000);
+    server.sin_addr.s_addr = inet_addr(szServerName);
+
+    // If a name is specified, convert the symbolic server
+    // address to an IP address
+    if (server.sin_addr.s_addr == INADDR_NONE)
+    {
+        host = gethostbyname(szServerName);
+        if (host == NULL)
+        {
+           MessageBox(0, "Unable to resolve server", "Error", 0);
+           return 1;
+        }
+        CopyMemory(&server.sin_addr, host->h_addr_list[0],
+            host->h_length);
+    }
+    // Connect to the server
+    if (connect(sClient, (struct sockaddr *)&server,
+        sizeof(server)) == SOCKET_ERROR)
+    {
+        MessageBox(0, "connect failed", "Error", 0);
+        return 1;
+    }
+
+    HANDLE        hNetThread;
+    DWORD         dwNetThreadId;
+    hNetThread = CreateThread(NULL, 0, NetThread,
+                    (LPVOID)&sClient, 0, &dwNetThreadId);
+
+    while(GetMessage(&msgs,0,0,0)) //pĂÂŞtla obsĂ‚ÂługujĂ‚Âąca wymianĂÂŞ komunikatĂÂłw
+    {
+        TranslateMessage(&msgs); //funkcja tĂ‚ÂłumaczĂ‚Âąca sygnaĂ‚Âły z klawiatury na odpowiednie komunikaty systemowe
+        DispatchMessage(&msgs); //funkcja przetwarzajĂ‚Âąca komunikaty systemowe przez procedury obsĂ‚Âługi
     }
     return msgs.wParam;
 }

@@ -51,6 +51,8 @@ char pakietStol[512]= {0};
 void dodajEnter(char str1[]);
 void sklejChary(char str1[], char str2[]);
 void pack(Buffer buff, char (&ref)[512]);
+void PrintCard(int iCard, char cKarta[]);//dla kompilacji xd
+Buffer unpack(char ref[512]);//to tez wyjebac jak bedzie glowny switch
 ////////////////////////////////////////////////////////////////////
 void pobierzListyStolyOkno();
 void pobierzListyStol();
@@ -72,42 +74,46 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          case WM_COMMAND:
          {
              if((HWND)lPar==hDobierz)
-             {  stolbuff.ID=8;
-                stolbuff.iKey[0]=1;
-                pack(stolbuff,spakiet);
-                send(sock,spakiet,sizeof(spakiet),0);
-                recv(sock,spakiet,sizeof(spakiet),0);
-                stolbuff=unpack(spakiet);stolbuff.iKey[0]=24;stolbuff.iKey[1]=24;
-                if(stolbuff.iKey[0]!=0)
+             {
+                sbufferStol.ID=8;
+                sbufferStol.iKey[0]=1;
+                pack(sbufferStol,pakietStol);
+                send(sock,pakietStol,sizeof(pakietStol),0);
+                /*recv(sock,pakietStol,sizeof(pakietStol),0);
+                sbufferStol=unpack(pakietStol);sbufferStol.iKey[0]=24;sbufferStol.iKey[1]=24;
+                if(sbufferStol.iKey[0]!=0)
                 {
                 char cKarta[4]={0};
-                PrintCard(stolbuff.iKey[1], cKarta);
+                PrintCard(sbufferStol.iKey[1], cKarta);
 
                 SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)cKarta);
                 }
-
+                */
             }
 
              else if((HWND)lPar==hPodwoj)
-             {  stolbuff.ID=8;
-                stolbuff.iKey[0]=2;
-                pack(stolbuff,spakiet);
-                send(sock,spakiet,sizeof(spakiet),0);
-                recv(sock,spakiet,sizeof(spakiet),0);
-                stolbuff=unpack(spakiet);
-                if(stolbuff.iKey[0]!=0)
+             {
+                sbufferStol.ID=8;
+                sbufferStol.iKey[0]=2;
+                pack(sbufferStol,pakietStol);
+                send(sock,pakietStol,sizeof(pakietStol),0);
+                /*recv(sock,pakietStol,sizeof(pakietStol),0);
+                sbufferStol=unpack(pakietStol);
+                if(sbufferStol.iKey[0]!=0)
                 {
                 char cKarta[4]={0};
-                PrintCard(stolbuff.iKey[1], cKarta);
+                PrintCard(sbufferStol.iKey[1], cKarta);
 
                 SendMessage(hListKart, LB_ADDSTRING, 0, (LPARAM)cKarta);
                 }
+                */
              }
              else if((HWND)lPar==hStoj)
-             {  stolbuff.ID=8;
-                stolbuff.iKey[0]=0;
-                pack(stolbuff,spakiet);
-                send(sock,spakiet,sizeof(spakiet),0);
+             {
+                sbufferStol.ID=8;
+                sbufferStol.iKey[0]=0;
+                pack(sbufferStol,pakietStol);
+                send(sock,pakietStol,sizeof(pakietStol),0);
              }
              else if((HWND)lPar==hOpuscStolik)
              {
