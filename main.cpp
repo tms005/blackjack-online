@@ -314,11 +314,6 @@ DWORD WINAPI NetThread(LPVOID ctx)
                             pobierzListyStol();
                     break;
 
-                case 6: //OPUSZCZENIE GRY:
-                            pobierzListyStolyOkno();//gracze online dostaja odswiezona liste ziomkow
-                            pobierzListyStol();
-                    break;
-
                 case 7: //GRA:
                         switch(sbuffer.iKey[0])
                             {
