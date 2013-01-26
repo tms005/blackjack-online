@@ -1,14 +1,12 @@
-#pragma comment(lib, "Ws2_32.lib")
 #include <windows.h>
 #include <commctrl.h>
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
 #include <winsock2.h>
-
 #include "funkcje.h"
 
-SOCKET  sClient;
+
 
 extern int stolyWinMain();
 extern HWND stolyOkno;
@@ -38,11 +36,14 @@ Stol pierwszy, drugi, trzeci, czwarty;
 
 char pakiet[512] = {0};
 char cKartaStol[256] = {0};
-int klientsrodki=0,klientstol=0,j=0,i=0,dg=0,dn=0,k=0,x=0;
+char cNazwaGracza[256] = {0};
+int klientsrodki=0,klientstol=0;
+int hold=0,j=0,i=0;
+int dg=0,dn=0,k=0,x=0;
 
 DWORD WINAPI NetThread(LPVOID ctx)
 {
-    SOCKET* sClientThread=(SOCKET*)ctx;
+    SOCKET* sockThread=(SOCKET*)ctx;
     int     ret;
 
     // A delay
@@ -52,36 +53,67 @@ DWORD WINAPI NetThread(LPVOID ctx)
     for(;;)
     {
     memset(pakiet,0,512);
-    ret = recv(*sClientThread, pakiet, 512, 0);
+    ret = recv(*sockThread, pakiet, 512, 0);
     if (ret == SOCKET_ERROR)
     {
-       MessageBox(0, "recv failed", "Error", 0);
+     //  MessageBox(0, "recv failed", "Error", 0);
     }
     else
             {
-		    sbuffer=unpack(pakiet);
+		    unpack(&sbuffer,pakiet);
 		    switch(sbuffer.ID)
                 {
                 case 0: //WIADOMOSC CZATU:
+                        char cNazwaGracza[256];
                         if(sbuffer.ID_USR==klient.ID_USR)
                         {
-                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );//bo po co rozkminiac gdzie wyswietlic xd
-                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
+                            cNazwaGracza[0]='J'; cNazwaGracza[1]='a'; cNazwaGracza[2]=':';
+                            sklejChary(cNazwaGracza,sbuffer.cChat);
+                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cNazwaGracza) );//bo po co rozkminiac gdzie wyswietlic xd
+                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cNazwaGracza) );
                         }
                         else
                         {
                         for(i=0;i<3;i++)
-                            if(sbuffer.ID_USR==pierwszy.iIdGraczy[i]) x=1;
+                            if(sbuffer.ID_USR==pierwszy.iIdGraczy[i])
+                                {
+                                    x=1;
+                                    przepiszChary(cNazwaGracza,pierwszy.cNazwyGraczy[i]);
+                                    hold = strlen(cNazwaGracza);
+                                    cNazwaGracza[hold] = ':';
+                                }
                         for(i=0;i<3;i++)
-                            if(sbuffer.ID_USR==drugi.iIdGraczy[i]) x=2;
+                            if(sbuffer.ID_USR==drugi.iIdGraczy[i])
+                                {
+                                    x=2;
+                                    przepiszChary(cNazwaGracza,drugi.cNazwyGraczy[i]);
+                                    hold = strlen(cNazwaGracza);
+                                    cNazwaGracza[hold] = ':';
+                                }
                         for(i=0;i<3;i++)
-                            if(sbuffer.ID_USR==pierwszy.iIdGraczy[i]) x=3;
+                            if(sbuffer.ID_USR==trzeci.iIdGraczy[i])
+                                {
+                                    x=3;
+                                    przepiszChary(cNazwaGracza,trzeci.cNazwyGraczy[i]);
+                                    hold = strlen(cNazwaGracza);
+                                    cNazwaGracza[hold] = ':';
+                                }
                         for(i=0;i<3;i++)
-                            if(sbuffer.ID_USR==pierwszy.iIdGraczy[i]) x=4;
+                            if(sbuffer.ID_USR==czwarty.iIdGraczy[i])
+                                {
+                                    x=4;
+                                    przepiszChary(cNazwaGracza,czwarty.cNazwyGraczy[i]);
+                                    hold = strlen(cNazwaGracza);
+                                    cNazwaGracza[hold] = ':';
+                                }
                         if(klientstol==x)
-                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
+                            {
+                            sklejChary(cNazwaGracza,sbuffer.cChat);
+                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cNazwaGracza) );
+                            }
                         else if(x==0)
-                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
+                            //wyszukanie nazwy gracza
+                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cNazwaGracza) );
                         }
                     break;
 
@@ -107,7 +139,9 @@ DWORD WINAPI NetThread(LPVOID ctx)
                             case 1: //jestes zalogowany
                                     klient.ID_USR=sbuffer.iKey[1];
                                     klientsrodki=sbuffer.iKey[2];
+                                    Sleep(1000);
                                     pobierzListyStolyOkno();
+                                    Sleep(1000);
                                     ShowWindow(stolyOkno,SW_SHOW);
                                     ShowWindow(Okno,SW_HIDE);
                                     UpdateWindow(stolyOkno);
@@ -155,7 +189,6 @@ DWORD WINAPI NetThread(LPVOID ctx)
                                                     dg++;
                                                 }
                                         }
-
                                     k=0;
                                     j=0;
                                     for(i=1;i<4;i++)
@@ -249,6 +282,8 @@ DWORD WINAPI NetThread(LPVOID ctx)
                             ShowWindow(stolOkno,SW_SHOW);
                             ShowWindow(stolyOkno,SW_HIDE);
                             UpdateWindow(stolOkno);
+                            //zczytac do jakiego stolu dolaczylem
+                            //klientstol=;
                         }
                         else
                         {
@@ -258,26 +293,59 @@ DWORD WINAPI NetThread(LPVOID ctx)
                     break;
 
                 case 5: //OPUSZCZENIE DANEGO STOLU
-                            pobierzListyStolyOkno();
+                        if(sbuffer.ID_USR==0)
+                        {
+                            pobierzListyStolyOkno();//dostajemy odswiezone listy
                             pobierzListyStol();
                             ShowWindow(stolyOkno,SW_SHOW);
                             ShowWindow(stolOkno,SW_HIDE);
                             UpdateWindow(stolyOkno);
+                            klientstol=0;
+                        }
+                        else
+                        {
+                            pobierzListyStolyOkno();
+                            pobierzListyStol();
+                        }
                     break;
 
                 case 6: //OPUSZCZENIE GRY:
-                            pobierzListyStolyOkno();
+                            pobierzListyStolyOkno();//gracze online dostaja odswiezona liste ziomkow
                             pobierzListyStol();
                     break;
 
-                case 7: //gramy
+                case 7: //GRA:
                         switch(sbuffer.iKey[0])
                             {
-                            case 0: //ktos spasowal - co odbieramy? wynik czy co?
+                            case 0: //ktos spasowal - co odbieramy? czekamy?
+                                    MessageBox(0,"Wystapil nieoczekiwany blad! case 8","Ha!",MB_OK); //for testing
+                                break;
+                            case 1: //ktos dobral - wartosc karty w iKey[1]
+                                    PrintCard(sbuffer.iKey[1],cKartaStol);//chyba zrobimy na zasadzie ze wysle zapytanie o przeslanie kart wszystkich osob
+
+                                break;
+                            case 2: //ktos podbil stawke (sa stawki? o_O) dobieramy tez karte automatycznie
+                                    MessageBox(0,"Stawka podbita! case 7","Ha!",MB_OK);//prowizorka
+                                break;
+                            case 3: //koniec rozgrywki
+                                    if(sbuffer.iKey[2]==1)
+                                    MessageBox(0,"Wygrales! case 7","Ha!",MB_OK);//jezeli bedzie potrzeba to sie zrobi w gui miejsce i licznik na wygrane i przegrane/prowizorka
+                                    else MessageBox(0,"Lo0oser! case 7","Ha!",MB_OK);
+                                break;
+                            default:
+                                    MessageBox(0,"Wystapil nieoczekiwany blad! case 8","Ha!",MB_OK);
+                            }
+                    break;
+
+                case 8: //TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
+                        switch(sbuffer.iKey[0])
+                            {
+                            case 0: //ktos spasowal - co odbieramy? czekamy?
                                     MessageBox(0,"Wystapil nieoczekiwany blad! case 8","Ha!",MB_OK); //for testing
                                 break;
                             case 1: //ktos dobral - wartosc karty w iKey[1]
                                     PrintCard(sbuffer.iKey[1],cKartaStol);//trzeba dopisac komu ma przydzielac tylko jak jak nie ma polaczenia nicki-id_usr
+
                                 break;
                             case 2: //ktos podbil stawke (sa stawki? o_O) dobieramy tez karte automatycznie
                                     PrintCard(sbuffer.iKey[1],cKartaStol);//trzeba dopisac komu ma przydzielac tylko jak jak nie ma polaczenia nicki-id_usr
@@ -290,13 +358,17 @@ DWORD WINAPI NetThread(LPVOID ctx)
                             }
                     break;
 
+                case 9: //INFORMACJA O TYM, ZE SERWER OCZEKUJE NA PODJECIE DECYZJI WZG KOLEJNEJ TURY GRY:
+                        MessageBox(0,"Rusz dupe! case 9","Ha!",MB_OK);//Serwer wysyla ta informacje do klienta, kiedy rozpoczyna sie jego runda.
+                    break;
+
                 default:
                         MessageBox(0,"Wystapil nieoczekiwany blad! caly","Ha!",MB_OK);
                 }
             }
     }
 
-    closesocket(sClient);
+    closesocket(sock);
 }
 
 
@@ -313,8 +385,8 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          case WM_DESTROY:
          {
             sbuffer.ID=6;
-            pack(sbuffer,pakiet);
-            send(sock,pakiet,sizeof(pakiet),0);
+            pack(&sbuffer,pakiet);
+            send(sock,pakiet,512,0);
             closesocket(sock);
             WSACleanup();
             PostQuitMessage(0);
@@ -333,8 +405,8 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
                 przepiszChary(sbuffer.cChat, cLogin);
                 sbuffer.ID=2;
-                pack(sbuffer,pakiet);
-                send(sock,pakiet,sizeof(pakiet),0);
+                pack(&sbuffer,pakiet);
+                send(sock,pakiet,512,0);
              }
              else if((HWND)lPar==hRejestr)
              {
@@ -345,10 +417,13 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 CHAR cPass[20];
                 GetWindowText(hPassWpisz, cPass, 20);
                 sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
+            MessageBox(0, cLogin, "Error", 0);
                 przepiszChary(sbuffer.cChat, cLogin);
+            MessageBox(0, sbuffer.cChat, "Error", 0);
                 sbuffer.ID=1;
-                pack(sbuffer,pakiet);
-                send(sClient, pakiet, strlen(pakiet), 0);
+                pack(&sbuffer,pakiet);
+            MessageBox(0, pakiet, "Error", 0);
+                send(sock, pakiet, 512, 0);
                 //send(sock,pakiet,sizeof(pakiet),0);
              }
              else if(wPar==10)
@@ -438,8 +513,8 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     strcpy(szServerName, "127.0.0.1");
 
     // Create a socket
-    sClient = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sClient == INVALID_SOCKET)
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == INVALID_SOCKET)
     {
        MessageBox(0, "Can't create socket", "Error", 0);
        return 1;
@@ -464,7 +539,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
             host->h_length);
     }
     // Connect to the server
-    if (connect(sClient, (struct sockaddr *)&server,
+    if (connect(sock, (struct sockaddr *)&server,
         sizeof(server)) == SOCKET_ERROR)
     {
         MessageBox(0, "connect failed", "Error", 0);
@@ -474,7 +549,7 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
     HANDLE        hNetThread;
     DWORD         dwNetThreadId;
     hNetThread = CreateThread(NULL, 0, NetThread,
-                    (LPVOID)&sClient, 0, &dwNetThreadId);
+                    (LPVOID)&sock, 0, &dwNetThreadId);
 
     while(GetMessage(&msgs,0,0,0)) //pĂÂŞtla obsĂ‚ÂługujĂ‚Âąca wymianĂÂŞ komunikatĂÂłw
     {
