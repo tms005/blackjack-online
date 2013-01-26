@@ -50,7 +50,7 @@ char pakietStol[512]= {0};
 /////////////////////////////////////////////////////////deklaracje////////////////////////////////////////////
 void dodajEnter(char str1[]);
 void sklejChary(char str1[], char str2[]);
-void pack(Buffer buff, char (&ref)[512]);
+void pack(Buffer *sbMssg, char cMessage[]);
 void PrintCard(int iCard, char cKarta[]);//dla kompilacji xd
 Buffer unpack(char ref[512]);//to tez wyjebac jak bedzie glowny switch
 ////////////////////////////////////////////////////////////////////
@@ -66,7 +66,7 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          case WM_CLOSE:
          {
             sbufferStol.ID=6;
-            pack(sbufferStol,pakietStol);
+            pack(&sbufferStol,pakietStol);
             send(sock,pakietStol,sizeof(pakietStol),0);
             PostQuitMessage(0);
             break;
@@ -77,7 +77,7 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              {
                 sbufferStol.ID=8;
                 sbufferStol.iKey[0]=1;
-                pack(sbufferStol,pakietStol);
+                pack(&sbufferStol,pakietStol);
                 send(sock,pakietStol,sizeof(pakietStol),0);
                 /*recv(sock,pakietStol,sizeof(pakietStol),0);
                 sbufferStol=unpack(pakietStol);sbufferStol.iKey[0]=24;sbufferStol.iKey[1]=24;
@@ -95,7 +95,7 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              {
                 sbufferStol.ID=8;
                 sbufferStol.iKey[0]=2;
-                pack(sbufferStol,pakietStol);
+                pack(&sbufferStol,pakietStol);
                 send(sock,pakietStol,sizeof(pakietStol),0);
                 /*recv(sock,pakietStol,sizeof(pakietStol),0);
                 sbufferStol=unpack(pakietStol);
@@ -112,13 +112,13 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              {
                 sbufferStol.ID=8;
                 sbufferStol.iKey[0]=0;
-                pack(sbufferStol,pakietStol);
+                pack(&sbufferStol,pakietStol);
                 send(sock,pakietStol,sizeof(pakietStol),0);
              }
              else if((HWND)lPar==hOpuscStolik)
              {
                     sbufferStol.ID=5;
-                    pack(sbufferStol,pakietStol);
+                    pack(&sbufferStol,pakietStol);
                     send(sock,pakietStol,sizeof(pakietStol),0);
                     pobierzListyStolyOkno();
                     ShowWindow(stolyOkno,SW_SHOW);
@@ -128,7 +128,7 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if((HWND)lPar==hStolWyloguj)
              {
                     sbufferStol.ID=2;
-                    pack(sbufferStol,pakietStol);
+                    pack(&sbufferStol,pakietStol);
                     send(sock,pakietStol,sizeof(pakietStol),0);
                     ShowWindow(Okno,SW_SHOW);
                     ShowWindow(stolOkno,SW_HIDE);
@@ -139,7 +139,7 @@ LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 GetWindowText(hStolMail, sbufferStol.cChat, 256);
                 dodajEnter(sbufferStol.cChat);
                 sbufferStol.ID=0;
-                pack(sbufferStol,pakietStol);
+                pack(&sbufferStol,pakietStol);
                 send(sock,pakietStol,sizeof(pakietStol),0);
                 SetWindowText(hStolMail,"");
                 SetFocus(hStolMail);
