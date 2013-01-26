@@ -29,7 +29,7 @@ int iKonto;//stan konto klienta
 char cKarty[4];//karty wszystkich graczy wlacznie z krupierem pod indeksem 0
 };
 
-void pack(Buffer buff, char ref[512]) //pakowanie - klient
+/*void pack(Buffer buff, char ref[512]) //pakowanie - klient
 {
      int i,j=0;
         ref[0]=(char)buff.ID;
@@ -61,7 +61,97 @@ Buffer unpack(char ref[512]) //odpakowanie - klient
         tempbuff.cChat[i-18]=ref[i];
     }
 return tempbuff;
+}*/
+
+void bbbIntToChar(int* source,
+							char* destination)
+{// zalozenie: source to wskaznik na pojedynczy int, zas destination to wskaznik na 4 znaki
+for(int x=0;x<4;x++) *(destination+x) =0; // czyszczê przestrzeñ docelow¹
+int i;
+unsigned int smask=1;
+unsigned char dmask;
+for(i=0;i<4;i++)
+	{
+		dmask=1;
+		for(int k=0;k<8;k++)
+		{
+			if((*source) & smask) *(destination+i) |=dmask;
+			dmask<<=1;
+			smask<<=1;
+		}
+	}
 }
+
+void bbbCharToInt(	char* source,
+								int* destination)
+{
+	int smask,dmask=1;
+	*destination=0;
+	for(int i=3;i>-1;i--)
+	{
+		smask=1;
+		for(int j=0;j<8;j++)
+		{
+			if( *(source+3-i) &smask) *destination |=dmask;
+			dmask<<=1;
+			smask<<=1;
+		}
+	}
+}
+
+int  _2TbbbCharToInt(	char* source,
+								int* destination,
+								int s_len,
+								int d_len)
+{																		//zwraca 0 jesli ok -1 jesli blad
+	if(s_len== d_len*(sizeof(int)/sizeof(char)) )
+	{
+	int i;
+	for(i=0;i<d_len;i++)
+		{
+		bbbCharToInt(source+(i*(sizeof(int)/sizeof(char))), destination+i);
+
+		}
+	return 0;
+	}
+	else return -1;
+}
+
+int  _2TbbbIntToChar(	int* source,
+								char* destination,
+								int s_len,
+								int d_len)
+{
+	if(d_len== s_len*(sizeof(int)/sizeof(char)) )
+	{
+		int i;
+		for(i=0;i<s_len;i++)
+			{
+			bbbIntToChar(source+i, destination+(i*(sizeof(int)/sizeof(char))));
+			}
+	return 0;
+	}
+return -1;
+}
+
+void pack(Buffer *sbMssg, char cMessage[])
+{// Funkcja konwersji nadawczej - > koduje wartości na podstawie struktury Buffer do tablicy znakow, która ma zostać przesłana
+	bbbIntToChar(&sbMssg->ID, &cMessage[0]);
+	bbbIntToChar(&sbMssg->ID_USR, &cMessage[4]);
+	int k;
+	_2TbbbIntToChar(	sbMssg->iKey, &cMessage[8], 16,64); // funkcja zapewnia prawidłowe kopiowanie bit po bicie informacjiz sbMssg->iKey do tablicy cMessage
+	for(k=0;k<256;k++) cMessage[k+72] = sbMssg->cChat[k]; // tutaj przesuniecie z powodu szerokosci poprzednich pol: (1+1+16)*4bajty = 72 bajty
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void unpack(Buffer *sbMssg, char *cMessage)
+{// Funkcja konwersji odbiorczej - > dekoduje wartości do struktury Buffer na podstawie odebranej tablicy znakow odebranej z połączenia
+	bbbCharToInt(&cMessage[0], &sbMssg->ID);
+	bbbCharToInt(&cMessage[4], &sbMssg->ID_USR);
+	int k;
+	_2TbbbCharToInt(&cMessage[8], sbMssg->iKey, 64, 16); // funkcja zapewnia prawidłowe kopiowanie bit po bicie informacji z sbMssg->iKey do tablicy cMessage
+	for(k=0;k<256;k++) sbMssg->cChat[k] = cMessage[k+72];
+}
+
 
 void sklejChary(char str1[], char str2[])
 {
@@ -150,11 +240,11 @@ void pobierzListyStolyOkno()
 
     tempbuff.ID=3;
     tempbuff.iKey[0]=1;//graczy w rankingu
-    pack(tempbuff,tempakiet);
+    pack(&tempbuff,tempakiet);
     send(sock,tempakiet,sizeof(tempakiet),0);
     Sleep(50);
     tempbuff.iKey[0]=2;//graczy online
-    pack(tempbuff,tempakiet);
+    pack(&tempbuff,tempakiet);
     send(sock,tempakiet,sizeof(tempakiet),0);
 }
 
@@ -165,8 +255,9 @@ void pobierzListyStol()
 
     tempbuff.ID=3;
     tempbuff.iKey[0]=0;//info o stolach
-    pack(tempbuff,tempakiet);
+    pack(&tempbuff,tempakiet);
     send(sock,tempakiet,sizeof(tempakiet),0);
 }
+
 
 #endif // FUNKCJE_H_INCLUDED
