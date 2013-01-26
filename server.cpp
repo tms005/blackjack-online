@@ -25,20 +25,20 @@
 #define MIN_BID								10
 using namespace std;
 
-typedef struct klient
+struct klient
 {
-    HANDLE thread;			//dla kazdego klienta tutaj mamy uchwyt watku obslugujacego go
-    SOCKET sock;			//dla kazdego klienta tutaj mamy uchwyt gniazda obslugujacego komunikacje z nim
-	int ID;						//tutaj przechowujemy ID kazdego zalogowanego gracza odpowiadajacego watkowi
-	int IT;							//tutaj przechowujemy IT kazdego grającego gracza odpowiadajacego watkowi
+    HANDLE thread;												//dla kazdego klienta tutaj mamy uchwyt watku obslugujacego go
+    SOCKET sock;												//dla kazdego klienta tutaj mamy uchwyt gniazda obslugujacego komunikacje z nim
+	int ID;															//tutaj przechowujemy ID kazdego zalogowanego gracza odpowiadajacego watkowi
+	int IT;																//tutaj przechowujemy IT kazdego grającego gracza odpowiadajacego watkowi
 	char cName[MAX_NAME_LEN];
-	int iScore;										//wynik danego gracza
-	int iCash;	
-	int iMySpot;
-};
-klient gracze[MAX_CLIENTS];
+	int iScore;														//wynik danego gracza
+	int iCash;														//gotowka danego gracza
+	int iMySpot;													//liczba identyfikujaca pola nalezace do gracza w strukturze table np gracz siedzacy przy zerowym miejscu
+};																		//przy pierwszym stoliku bedzie mogl sie odwolac do tego miejsca: STOLIK[gracz->IT].ID[gracz->iMySpot]
+klient gracze[MAX_CLIENTS];								//w podobny sposob moze sie odwolac do wszystkich elementow ktorych licznosc wynosi MAX_PLAYERS_PER_TABLE
 
-typedef struct table{
+struct table{
 int ID[MAX_PLAYERS_PER_TABLE];								// w kazdym stoliku max 4 graczy // std wartosc: 0
 bool baCardsDealt[52];											// tutaj talia rozdanych kart
 int iHouseCardCount ;												// tutaj punkty zdobyte przez krupiera
@@ -50,31 +50,27 @@ int iaPlayerHand[MAX_PLAYERS_PER_TABLE][12];		// tutaj karty gracza
 int iActivePlayer;														// gracz ktory wlasnie w kolejce podejmuje decyzje
 int iRoundMask[MAX_PLAYERS_PER_TABLE];				// jesli gracz wlasnie dolaczyl nie moze grac puki nie rozpocznie sie nowe rozdanie.. ta maska chroni przed taka sytuacja
 int iSTARTED;
-int iActive[MAX_PLAYERS_PER_TABLE];																//mowi o tym czy w danej rundzie gracz zrezygnowal (spasowal)
+int iActive[MAX_PLAYERS_PER_TABLE];						//mowi o tym czy w danej rundzie gracz zrezygnowal (spasowal)
 } ;
-table STOLIK[MAX_TABLES]; // istnieja 3 stoliki
+table STOLIK[MAX_TABLES];									// istnieja 3 stoliki
 
-//struktura wiadomosci
-typedef struct Buffer {
-short ID;			//identyfikator funkcji , patrz dalej dostepne klucze
-short ID_USR;		// nadawany przez serwer klucz dla każdego połączonego z serwerem użytkownika
-short iKey[16];	// w tym polu mamy kolejne argumenty dla funkcji 
+struct Buffer {															//struktura wiadomosci słóżącej do komunikacji serwer<->klient
+int ID;																	//identyfikator funkcji , patrz dalej dostepne klucze
+int ID_USR;																// nadawany przez serwer klucz dla każdego połączonego z serwerem użytkownika
+int iKey[16];															// w tym polu mamy kolejne argumenty dla funkcji 
 char cChat[256];
 };
 
-
-
-	// tablica zalogowanych graczy
-int iUzytyStol[MAX_TABLES]	;			// tablica wykorzystanych stolow
-int active_players[MAX_CLIENTS];		// ta tablica reguluje naplywajace polaczenia poprzez limitowanie ich do jej dlugosci		
+int iUzytyStol[MAX_TABLES]	;									// tablica wykorzystanych stolow !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! SPRAWDZIC UZYTECZNOSC ZMIENNEJ LUB WYELIMINOWAC!!!!!!!!!!!!
+int active_players[MAX_CLIENTS];								// ta tablica reguluje naplywajace polaczenia poprzez limitowanie ich do jej dlugosci		
 int iAktywny;
-//	tutaj przechowujemy pojedynczy kwant danych o klientach zapisany w pliku klientow
-typedef struct dane{
+				
+struct dane{															//	tutaj przechowujemy pojedynczy kwant danych o klientach zapisany w pliku klientow
 int ID;						
 char cName[MAX_NAME_LEN];
 char cPass[MAX_PASS_LEN];
-int iScore;										//wynik danego gracza
-int iCash;										//wysokosc konta danego gracza
+int iScore;																//wynik danego gracza
+int iCash;																//wysokosc konta danego gracza
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,28 +79,87 @@ int iCash;										//wysokosc konta danego gracza
 
 
 void sbMssgCLEAR(Buffer *sbMssg); 
- void sConversion(Buffer *sbMssg, char cMessage[]);
- void rConversion(Buffer *sbMssg, char *cMessage);
- void cMessageForward(Buffer *sbMssg);
-short iGenerujIdGracza(FILE*);
-int iPorownajHaslo(Buffer *sbMssg, char napis[]);
+ void sConversion(	Buffer *sbMssg,
+							char cMessage[]);
+ void rConversion(	Buffer *sbMssg,
+							char *cMessage);
+
+int iGenerujIdGracza(FILE*);
+int iPorownajHaslo(Buffer *sbMssg,
+							char napis[]);
 char* sWybierzHaslo(Buffer* sbMssg);
 int iTranslate(Buffer* sbMssg);
 const char* sWybierzImie(Buffer *sbMssg);
            //////////////////// Funkcje Silnika Gry:
 void vNextPlayer(int IT);
-void vShuffle(bool baCardsDealt[]);
-void vEmptyHand(int  (*hand)[3][12], int index);
+
+void vShuffle(	bool baCardsDealt[]);
+
+void vEmptyHand(	int  (*hand)[3][12],
+							int index);
+
 void vUaktualnijDane(klient* gracz);
-void vWywal(table *STOL, klient* player);
-void	vRozeslijWynik(klient* player, int card);
+
+void vWywal(table *STOL,
+					klient* player);
+
+void	vRozeslijWynik(	klient* player,
+								int card);
+
 int GetNextCard(bool baCardsDealt[]);
-int ifend(table STOL, klient* gracz);
-int ScoreHand(int iaHand[], const int kiCardCount);
-int vCzyKoniec(table, klient*);	
-void complete_house(table* STOL, int g);
-void jump_next(table *STOL, klient *gracz, char* cMessage);
-void  vFindWinner(table* STOL, int IT, char* cMessage);
+
+int ifend(	table STOL,
+				klient* gracz);
+
+int ScoreHand(	int iaHand[],
+						const int kiCardCount);
+
+int vCzyKoniec(	table, 
+						klient*);	
+
+void complete_house(	table* STOL,
+								int g);
+
+void jump_next(	table *STOL,
+						klient *gracz,
+						char* cMessage);
+
+void  vFindWinner(	table* STOL,
+							int IT,
+							char* cMessage);
+
+void bbbIntToChar(	int* source,
+								char* destination);
+
+void bbbCharToInt(	char * source,
+								int* destination);
+
+
+
+int  _2TbbbCharToInt(	char* source,
+								int* destination,
+								int s_len,
+								int d_len);
+
+int  _2TbbbIntToChar(	int* source,
+								char* destination,
+								int s_len,
+								int d_len);
+
+void	vAddTerminalChar(	char sName[],
+									int len);
+
+int iFindFreeSlot(int active_players[]);
+
+int iIfFreeSlot(int active_players[]);
+
+
+void vDebugPrintMssg(Buffer *sbMssg);
+
+void CLEAN_TABLES(table* STOL);
+
+void CLEAN_CLIENTS(klient gracz[]);
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////SILNIK GRY///////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -119,10 +174,13 @@ void  vFindWinner(table* STOL, int IT, char* cMessage);
 
 	char cMessage[512];
 	Buffer sbMssg; 
+			cout<<"start!";
+
 	while(iAktywny)
 	{
-	  ret = recv( gracz->sock, cMessage, 512, 0);
-
+		cout<<"start!";
+	  ret = recv(gracz->sock, cMessage, 512, 0);
+	  cout<<ret<<endl;
 	   if(ret == 0)   //polaczenie zamkniete po stronie klienta
 		{
 			cout<<"Klient: ";
@@ -144,84 +202,103 @@ void  vFindWinner(table* STOL, int IT, char* cMessage);
 			}
 			return 0;
 	   }
-	
+	 cout<<"Otrzymalem wiadomosc:"<<cMessage<<endl;
 	   rConversion(&sbMssg, cMessage);				 // za kazdym odebraniem wiadomosci z klienta tlumacze ja z powrotem do postaci ramki struktury
 	   cout<<"Otrzymalem wiadomosc:"<<sbMssg.ID<<endl;
 	iMode=	iTranslate(&sbMssg); // tutaj decydujemy co bedzie sie dzialo 
-switch(iMode)
+
+	vDebugPrintMssg(&sbMssg);
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	switch(iMode)
 		{
-	case 0:
-		{									// wysylamy wiadomosc do swojego stolika lub do wszystkich
-			cMessageForward(&sbMssg);			 // <- do zaimplementowania 
-			for(int i=0;i<MAX_CLIENTS;i++) if( gracz->IT == gracze[i].IT && gracz->ID != gracze[i].ID ) send( gracze[i].sock  , cMessage, DEFAULT_BUFLEN, 0);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+case 0:
+		{																				// wysylamy wiadomosc do swojego stolika lub do wszystkich
+			sbMssg.ID_USR =gracz->ID;
+			if(gracz->IT)  for(int i=0;i<MAX_CLIENTS;i++) if( gracz->IT == gracze[i].IT && gracz->ID != gracze[i].ID ) send( gracze[i].sock  , cMessage, DEFAULT_BUFLEN, 0);
+			else for(int i=0;i<MAX_CLIENTS;i++) if (gracz[i].IT!=-1) send( gracze[i].sock  , cMessage, DEFAULT_BUFLEN, 0);
 			break;
 		}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	case 1:
 		{
-			int id, trash, already_exist=0;
+			int id=0, trash=0, already_exist=0;
 			char sName[MAX_NAME_LEN], sPass[MAX_PASS_LEN];
-			//sprawdzic czy gracz juz istnieje w bazie
-		FILE* login= fopen("login.txt", "rt+");
-			if (login==NULL) 
+			FILE* login= fopen("login.txt", "r+");
+			if (login==NULL) 																	//sprawdzic czy gracz juz istnieje w bazie
 			{
-				fputs ("File error",stderr); sbMssg.iKey[0]=0;
+				fputs ("Plik login nie istnieje! Tworzę nowy plik...\n", stderr);
+				FILE* login= fopen("login.txt", "a");
+				if (login==NULL) 																	
+				{
+				sbMssg.iKey[0]=0;
 				send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);		 
+				
 				break;
-			} 
-			while(feof(login) == 0){
+				}
+			}
+			while(feof(login) == 0)
+			{
 			fscanf(login, "%d", &id);
 			fscanf(login, "%s", &sName);
 			fscanf(login, "%s", &sPass);
 			fscanf(login, "%d", &trash);
 			fscanf(login, "%d", &trash);
-	
+			vAddTerminalChar(sName, MAX_NAME_LEN);
+			vAddTerminalChar(sPass, MAX_PASS_LEN);
+
 			if( ! strcmp(sName ,sWybierzImie(&sbMssg) ) ) already_exist=1;
-		 }
-		fclose(login);
-		if(!already_exist)
-		{
-		FILE* login= fopen("login.txt", "rt+");
-			if (login==NULL) 
-			{
-				fputs ("File error",stderr); sbMssg.iKey[0]=0;
-				send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);		 
-				break;
-			} 
-			sbMssg.ID_USR = iGenerujIdGracza(login);
+			}
+
 			fclose(login);
-			login= fopen("login.txt", "wt+");
-			if (login==NULL) 
-			{
-				fputs ("File error",stderr); sbMssg.iKey[0]=0;
-				send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);		 
-				break;
-			} 
-			fseek (login , 0 , SEEK_END);
-			fprintf(login, "%d %s %s %d %d\n",sbMssg.ID_USR, sWybierzImie(&sbMssg), sWybierzHaslo(&sbMssg), 0, BEGGINERS_CASH ); 
-			fclose(login);
+			if(!already_exist)
+				{
+				FILE* login= fopen("login.txt", "a");
+					if (login==NULL) 
+					{
+					fputs ("File error",stderr); 
+					sbMssg.iKey[0]=0;
+					send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);		 // to nigdy nie powinno sie zdarzyc
+					break;
+					}
+				sbMssg.ID_USR = iGenerujIdGracza(login);
+				fprintf(login, "%d %s %s %d %d\n",sbMssg.ID_USR, sWybierzImie(&sbMssg), sWybierzHaslo(&sbMssg), 0, BEGGINERS_CASH ); 
+				fclose(login);
 		//  0 jako poczatkowa wartosc wyniku gracza
 		}else
 		{
 		sbMssg.iKey[0]=0;
 		}
-
 		sConversion(&sbMssg, cMessage);	
 		send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);
 		break;
 		}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	case 2:
-		{
-		
-		if(-1==gracz->ID){			// NIE JESTESMY ZALOGOWANI, ALE CHCEMY TO ZROBIC I JEST MIEJSCE POWNIEWAZ WATEK ISTNIEJE
+		{	
+	vDebugPrintMssg(&sbMssg);
+			if(-1==gracz->ID){			// NIE JESTESMY ZALOGOWANI, ALE CHCEMY TO ZROBIC I JEST MIEJSCE POWNIEWAZ WATEK ISTNIEJE
 		int id, cash, score;
+		printf("\n..............\n");
 		char name[MAX_NAME_LEN], pass[MAX_PASS_LEN];
-		FILE* login= fopen("login.txt", "rt");
-		 if (login==NULL) 
-		 {
-		fputs ("File error",stderr); sbMssg.iKey[0]=0;
-		send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);
-		break;
-		 }
+			FILE* login= fopen("login.txt", "r+");
+			if (login==NULL) 																	//sprawdzic czy gracz juz istnieje w bazie
+			{
+				fputs ("Plik login nie istnieje! Tworzę nowy plik...\n", stderr);
+				FILE* login= fopen("login.txt", "a");
+				if (login==NULL) 																	
+				{
+				sbMssg.iKey[0]=0;
+				send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);		 
+				
+				break;
+				}
+			}
 		 while(feof(login) == 0){
 			 	 
 			 fscanf(login, "%d", &id);
@@ -229,6 +306,8 @@ switch(iMode)
 			 fscanf(login, "%s", &pass);
 			 fscanf(login, "%d", &score);
 			fscanf(login, "%d", &cash);
+			vAddTerminalChar(name, MAX_NAME_LEN);
+			vAddTerminalChar(pass, MAX_PASS_LEN);
 			if(!strcmp(name, sWybierzImie(&sbMssg))) break;
 		 }
 		 
@@ -255,16 +334,13 @@ switch(iMode)
 			  send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);
 		 }
 		}
-		 else
+		 else			  // tutaj sie wylogowujemy, wiec odsylamy po prostu co dostalismy
 	   {
-	   	   
-	  // tutaj sie wylogowujemy, wiec odsylamy po prostu co dostalismy
-	   sConversion(&sbMssg, cMessage); //  konwersja sbMssg <-> cMessage
-	   send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);
-	   //a nastepnie sprawdzamy dane dot. tego czy: jestesmy przy stole i gramy
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	   	if(	STOLIK[gracz->IT].iActivePlayer == gracz->ID ) vNextPlayer(gracz->IT);							// jesli gracz byl wybierajacym graczem, to nalezy zmienic go na nastepnego
+		   	printf("\n......111.....\n");
+	   sConversion(&sbMssg, cMessage);																						//  konwersja sbMssg <-> cMessage
+	   send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0);															//a nastepnie sprawdzamy dane dot. tego czy: jestesmy przy stole i gramy
+	   
+	   	if(	STOLIK[gracz->IT].iActivePlayer == gracz->ID ) vNextPlayer(gracz->IT);								// jesli gracz byl wybierajacym graczem, to nalezy zmienic go na nastepnego
 			int k,i,j=0;
 			for(i=0;i<MAX_PLAYERS_PER_TABLE;i++) if(STOLIK[gracz->IT].ID[i] == gracz->ID) k =i;		// wybieram ktore pola w strukturze odpowiadaja bierzacemu graczowi
 
@@ -286,32 +362,22 @@ switch(iMode)
 			{
 				send(gracze[i].sock  , cMessage, DEFAULT_BUFLEN, 0);													// rozsylam info o opuszczeniu rozgrywki
 			}
-			// zapisanie informacji o zarobionej gotowce/pktach
-			vUaktualnijDane(gracz);
-			//oraz czyszczenie danych logowania serwera
-			strcpy(gracz->cName, " ");
+			vUaktualnijDane(gracz);																									// zapisanie informacji o zarobionej gotowce/pktach
+			strcpy(gracz->cName, "\0");																								//oraz czyszczenie danych logowania serwera
 			gracz->ID=0;
 			gracz->iCash=0;
 			gracz->iScore=0;
 			gracz->IT=-1;
 
 		break;
-		
-															/// DO DOKONCZENIA: WYLOGOWANIE W PRZYPADKU GDY GRACZ GRA!
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-	   
 		}
 		 break;
 	   }
-
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	case 3:
 		{
-		switch(sbMssg.ID_USR)
+			if(sbMssg.ID_USR>0) switch(sbMssg.ID_USR)
 			{
 			case 0: 
 				{
@@ -326,7 +392,7 @@ switch(iMode)
 				}
 			case 1:
 				{
-					FILE* login= fopen("login.txt", "rt");
+					FILE* login= fopen("login.txt", "rt+");
 				 if (login==NULL) 
 				 {
 					fputs ("File error",stderr);
@@ -348,7 +414,7 @@ switch(iMode)
 				 }
 				 //mamy zapelniona liste, wybieramy teraz najlepsze 10 wynikow:
 				 vector<dane>::iterator it = ranking.begin();
-				 while(ranking.size() >5)
+				 while(ranking.size() >10)
 				 {
 					 it = ranking.begin();
 					 for(vector<dane>::iterator x=ranking.begin()+1; x<ranking.end(); x++)
@@ -363,14 +429,12 @@ switch(iMode)
 				string best;
 				best.clear();
 				 while(ranking.size()){
-					
 					 it = ranking.begin();
 					for(vector<dane>::iterator x=ranking.begin()+1; x<ranking.end(); x++)
 						 {
 						 if(x->iScore > it->iScore) it = x;
 						 }
-					sbMssg.iKey[k] = it->ID;
-					sbMssg.iKey[k+5] = it->iScore;
+					sbMssg.iKey[k] = it->iScore;
 					best+=it->cName;
 					best+=' ';
 					k++;
@@ -379,7 +443,6 @@ switch(iMode)
 				 break;
 				}
 
-
 			case 2:
 				{
 					string zalogowani;
@@ -387,9 +450,9 @@ switch(iMode)
 				//	2 - przeslij informacje o zalogowanych graczach
 					for(int i=0;i<MAX_CLIENTS;i++)
 					{
-						if(gracze[i].IT == -1)
+						if(gracze[i].ID >0)
 						{
-							//zalogowany ale bez stolu	
+							//zalogowany
 							zalogowani+=gracze[i].cName;
 							zalogowani+=' ';
 						}
@@ -404,10 +467,8 @@ switch(iMode)
 		
 		break;
 	}
-
-
-
-
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	case 4:
 		{ // przylaczenie sie do stolu..
 			if(sbMssg.ID_USR >=0 && sbMssg.ID_USR < MAX_TABLES)
@@ -449,7 +510,9 @@ switch(iMode)
 				}
 			}
 		}
-	case 5:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+case 5:
 		{	
 			if(	STOLIK[gracz->IT].iActivePlayer == gracz->ID ) vNextPlayer(gracz->IT);							// jesli gracz byl wybierajacym graczem, to nalezy zmienic go na nastepnego
 			int k,i,j=0;
@@ -476,7 +539,9 @@ switch(iMode)
 
 		break;
 		}
-	case 6:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+case 6:
 		{
 			if(gracz->ID) // jesli gracz byl zalogowany
 				{
@@ -521,7 +586,9 @@ switch(iMode)
 			closesocket(gracz->sock);
 			break;
 		}
-	case 7:
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+case 7:
 		{													//glowna funkcja gry: zalozenia: jestesmy przy stoliku i wiadomosc przychodzi od gracza bedacego graczem aktywnym
 			int karta=-1;
 			for(int i=0;i<MAX_PLAYERS_PER_TABLE;i++) if(STOLIK[gracz->IT].ID[i] = gracz->ID) gracz->iMySpot = i; // w tabeli STOLIK ten numer indeksuje zmienne tego gracza
@@ -533,11 +600,10 @@ switch(iMode)
 				//ok mozna grac!!
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////   SILNIK GRY   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////   MECHANIZM KRUPIERA ///////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-					switch(sbMssg.iKey[0])
+				switch(sbMssg.iKey[0])
 					{
 					case 2:
 						{
@@ -586,10 +652,6 @@ switch(iMode)
 							
 						break;
 						 }
-
-
-
-
 					case 1:
 						{
 						if(STOLIK[gracz->IT].iSTARTED == 0)
@@ -654,11 +716,6 @@ switch(iMode)
 						}
 					}
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 				}
 			}
 			else// czy gracz ma dostatecznie duzo kasy by zagrac?:  nie
@@ -669,6 +726,11 @@ switch(iMode)
 	
 		break;
 		}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 	case 8:
 		{
@@ -715,33 +777,14 @@ switch(iMode)
 		return 0;
 }
 
-void ShutdownServer(struct klient clients[])
-{
-    // zamykamy niezamknięte socket'y klientów
-    for (int i = 0; i < MAX_CLIENTS; i++) 
-        if (clients[i].sock != INVALID_SOCKET)
-        {
-            closesocket (clients[i].sock);
-            clients[i].sock = INVALID_SOCKET;
-        }
-}
 
-
-int iIfFreeSlot(int active_players[])
-{
-int i=0;
-for(int x=0;x<MAX_CLIENTS;x++)
-	if(active_players[x]) i++;
-return MAX_CLIENTS - i;
-}
-
-int iFindFreeSlot(int active_players[])
-{
-int i=0;
-while(active_players[i])i++;
-return i+1;
-}
-///////////////////////////////////////////////// FUNKCJA WATKA SILNIKA GRY (oddzielna dla kazdego klienta) //////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////  POCZĄTEK GLOWNEGO WATKU PROGRAMU  ///////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 int __cdecl main(void)
 {
@@ -749,8 +792,8 @@ int __cdecl main(void)
     SOCKET ListenSocket = INVALID_SOCKET;
 	int iResult;
     int SERVER_ON=1;
-
-
+	CLEAN_CLIENTS(gracze);
+	CLEAN_TABLES(STOLIK);
 
 	for (int i = 0; i < MAX_CLIENTS; i ++)
     {
@@ -762,8 +805,8 @@ int __cdecl main(void)
 	struct addrinfo *result = NULL;
     struct addrinfo hints;
 	int recvbuflen = DEFAULT_BUFLEN;
-    int iSendResult;
-    char recvbuf[DEFAULT_BUFLEN];
+
+ 
   
 
   ///////////////////// // TUTAJ STARTUJEMY Z WINSOCKEM/////////////////////////////////
@@ -802,7 +845,7 @@ int __cdecl main(void)
 		
         printf("Błąd wiązania gniazda: %d\n", WSAGetLastError());
 
-					system("PAUSE");
+		system("PAUSE");
         freeaddrinfo(result);
         closesocket(ListenSocket);
         WSACleanup();
@@ -839,6 +882,7 @@ int __cdecl main(void)
         return 1;
     }// istartujemy nowy watek:]
 			cout<<"A";
+			iAktywny =1;
 	gracze[free_slot].thread = CreateThread (NULL, 0, iSilnikGry, (LPVOID)&gracze[free_slot], 0, NULL);
 	if(!gracze[free_slot].thread)
 			{		
@@ -871,10 +915,15 @@ int __cdecl main(void)
     return 0;
 }
 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////  KONIEC GLOWNEGO WATKU PROGRAMU  //////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 ////////////////////////////////FUNKCJA CZYSCI ZAWARTOSC STRUKTURY sbMssg//////////////////////////////////////////////////////////////////////////////////////
 void sbMssgCLEAR(Buffer* x)
 {
@@ -887,30 +936,24 @@ void sbMssgCLEAR(Buffer* x)
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void sConversion(Buffer *sbMssg, char cMessage[])
-{
-cMessage[0] = (char)sbMssg->ID;
-cMessage[1] = (char)sbMssg->ID_USR;
-int k;
-for(k=2;k<18;k++) cMessage[k] = (char)sbMssg->iKey[k-2];
-for(k=18;k<275;k++) cMessage[k] = sbMssg->cChat[k-18];
-
+{// Funkcja konwersji nadawczej - > koduje wartości na podstawie struktury Buffer do tablicy znakow, która ma zostać przesłana
+	bbbIntToChar(&sbMssg->ID, &cMessage[0]);
+	bbbIntToChar(&sbMssg->ID_USR, &cMessage[4]);
+	int k;
+	_2TbbbIntToChar(	sbMssg->iKey, &cMessage[8], 16,64); // funkcja zapewnia prawidłowe kopiowanie bit po bicie informacjiz sbMssg->iKey do tablicy cMessage
+	for(k=0;k<256;k++) cMessage[k+72] = sbMssg->cChat[k]; // tutaj przesuniecie z powodu szerokosci poprzednich pol: (1+1+16)*4bajty = 72 bajty
 }
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void rConversion(Buffer *sbMssg, char *cMessage)
-{
-sbMssg->ID =(int)cMessage[0];
-sbMssg->ID_USR =(int) cMessage[1];
-int k;
-for(k=2;k<18;k++) sbMssg->iKey[k-2] = (int)cMessage[k];
-for(k=18;k<275;k++) sbMssg->cChat[k-18]=  cMessage[k];
+{// Funkcja konwersji odbiorczej - > dekoduje wartości do struktury Buffer na podstawie odebranej tablicy znakow odebranej z połączenia
+	bbbCharToInt(&cMessage[0], &sbMssg->ID);
+	bbbCharToInt(&cMessage[4], &sbMssg->ID_USR);
+	int k;
+	_2TbbbCharToInt(&cMessage[8], sbMssg->iKey, 64, 16); // funkcja zapewnia prawidłowe kopiowanie bit po bicie informacji z sbMssg->iKey do tablicy cMessage
+	for(k=0;k<256;k++) sbMssg->cChat[k] = cMessage[k+72]; 
 }
-
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-short iGenerujIdGracza(FILE* name)
+int iGenerujIdGracza(FILE* name)
 {
 	vector<int> tab;
 	tab.clear();
@@ -939,12 +982,6 @@ return ID;
 }
 
 
-void cMessageForward(Buffer *sbMssg)
-{
-
-	return;
-}
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////FUNKCJA ZWRACA CIAG BEDACY HASLEM GRACZA////////////////////////////////////////////////////////////////////////////////////////
 char* sWybierzHaslo(Buffer* sbMssg)
@@ -958,13 +995,18 @@ char* sWybierzHaslo(Buffer* sbMssg)
 	start=i+1;
 	i++;
 	while(sbMssg->cChat[i] != ' ')i++;
-	end=i-1;
+	end=i;
 	while(start!=end)
 	{
 		ch=sbMssg->cChat[start++];
 		pass+=ch;
 	}
-	return (char*) pass.c_str();
+	char x[MAX_PASS_LEN] ;
+	strcpy(x, &pass[0]);
+	vAddTerminalChar(x, MAX_PASS_LEN);
+	
+	
+	return &x[0];
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -977,7 +1019,7 @@ const char* sWybierzImie(Buffer *sbMssg)
 	int start=0, end;
 	int i=0;
 	while(sbMssg->cChat[i] != ' ')i++;
-	end=i-1;
+	end=i;
 	while(start!=end)
 	{
 		ch=sbMssg->cChat[start++];
@@ -1020,6 +1062,11 @@ return sbMssg->ID;
 void vUaktualnijDane(klient* gracz)
 {
 dane updated;
+updated.cName[0]='\0';
+updated.cPass[0]='\0';
+updated.iCash=0;
+updated.ID=0;
+updated.iScore=0;
 vector<dane> t;
 FILE* login= fopen("login.txt", "rt+");
 while(feof(login) == 0){
@@ -1131,7 +1178,7 @@ int ifend(table STOL, klient* gracz)
 //spr czy caly stolik zakonczyl rozgrywke?
 int vCzyKoniec(table STOL, klient* gracz)														
 {
-	int p;
+	int p=0;
 for(int i=0;i>MAX_PLAYERS_PER_TABLE;i++)
 	p+= STOL.iActive[i];
 if(p) return 0;
@@ -1208,4 +1255,181 @@ else
 	sConversion(&RTRN, cMessage);
 	send(gracz->sock  , cMessage, DEFAULT_BUFLEN, 0); // i wysylamy wiadomosc do samego siebie :)
 }
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void bbbIntToChar(int* source,
+							char* destination)
+{// zalozenie: source to wskaznik na pojedynczy int, zas destination to wskaznik na 4 znaki
+for(int x=0;x<4;x++) *(destination+x) =0; // czyszczę przestrzeń docelową
+int i;
+unsigned int smask=1;
+unsigned char dmask;
+for(i=0;i<4;i++)
+	{
+		dmask=1;
+		for(int k=0;k<8;k++)
+		{
+			if((*source) & smask) *(destination+i) |=dmask;
+			dmask<<=1;
+			smask<<=1;
+		}
+	}
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void bbbCharToInt(	char* source,
+								int* destination)
+{
+	int smask,dmask=1;
+	*destination=0;
+	for(int i=3;i>-1;i--) 
+	{
+		smask=1;
+		for(int j=0;j<8;j++)
+		{
+			if( *(source+3-i) &smask) *destination |=dmask;
+			dmask<<=1;
+			smask<<=1;
+		}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int  _2TbbbCharToInt(	char* source,
+								int* destination,
+								int s_len,
+								int d_len)
+{																		//zwraca 0 jesli ok -1 jesli blad
+	if(s_len== d_len*(sizeof(int)/sizeof(char)) )
+	{
+	int i;
+	for(i=0;i<d_len;i++) 
+		{
+		bbbCharToInt(source+(i*(sizeof(int)/sizeof(char))), destination+i);
+
+		}
+	return 0;
+	}
+	else return -1;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int  _2TbbbIntToChar(	int* source,
+								char* destination,
+								int s_len,
+								int d_len)
+{
+	if(d_len== s_len*(sizeof(int)/sizeof(char)) )
+	{
+		int i;
+		for(i=0;i<s_len;i++) 
+			{
+			bbbIntToChar(source+i, destination+(i*(sizeof(int)/sizeof(char))));
+			}
+	return 0;
+	}
+return -1;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void ShutdownServer(struct klient clients[])
+{
+    // zamykamy niezamknięte socket'y klientów
+    for (int i = 0; i < MAX_CLIENTS; i++) 
+        if (clients[i].sock != INVALID_SOCKET)
+        {
+            closesocket (clients[i].sock);
+            clients[i].sock = INVALID_SOCKET;
+        }
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int iIfFreeSlot(int active_players[])
+{
+int i=0;
+for(int x=0;x<MAX_CLIENTS;x++)
+	if(active_players[x]) i++;
+return MAX_CLIENTS - i;
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int iFindFreeSlot(int active_players[])
+{
+int i=0;
+while(active_players[i])i++;
+return i+1;
+}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void	vAddTerminalChar(char sName[], int len)
+	{
+	char* c=NULL;
+	int tmp=-1;
+	for(int i=0;i<len-1;i++)
+	{
+	if(sName[i]==' ' || sName[i]=='\0')  
+		{
+			c=&sName[i];
+			break;
+		}
+	}
+	if(c) {
+		if(*c==' ') *c='\0';
+		}
+	else
+	{
+	sName[len-1]='\0';
+	}
+	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+void vDebugPrintMssg(Buffer *sbMssg)
+{
+cout<<endl<<"ID\tID_USR\t"<<endl;
+cout<<sbMssg->ID<<"\t"<<sbMssg->ID_USR<<endl;
+cout<<"iKey:"<<endl;
+for(int i=0;i<16;i++) cout<<sbMssg->iKey[i];
+int x=0;
+while(sbMssg->cChat[x++] != '\0') 
+{
+	cout<<sbMssg->cChat[x];
+	if(x%25==24)cout <<endl;
+}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void CLEAN_TABLES(table* STOL)
+{
+	for(int i=0;i<MAX_TABLES;i++)
+	{
+		for(int j=0;j<52;j++) STOL[i].baCardsDealt[j]=false;
+		for(int j=0;j<MAX_PLAYERS_PER_TABLE;j++)STOL[i].iActive[j]=0;
+		STOL[i].iSTARTED=0;
+		STOL[i].iActivePlayer=0;
+		for(int j=0;j<52;j++) STOL[i].baCardsDealt[j]=false;
+		for(int j=0;j<12;j++) STOL[i].iaHouseHand[j] =0;
+		for(int x=0;x<MAX_PLAYERS_PER_TABLE;x++)
+			{
+				STOL[i].ID[x]=0;
+				STOL[i].iPlayerCardCount[x]=0;
+				STOL[i].iPlayerCash[x]=0;
+				STOL[i].iPlayerBid[x] = 0;
+				for(int j=0;j<12;j++) STOL[i].iaPlayerHand[x][j]=0;
+				STOL[i].iRoundMask[x] =0;
+				STOL[i].iActive[x]=0;
+			}
+	}
+}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void CLEAN_CLIENTS(klient gracz[])
+{
+	for(int i=0;i<MAX_CLIENTS;i++)
+	{
+		gracz[i].thread=NULL;
+		gracz[i].sock=INVALID_SOCKET;
+		gracz[i].ID=0;
+		gracz[i].IT=-1;
+		strcpy(gracz[i].cName, "\0");
+		gracz[i].iScore=0;
+		gracz[i].iCash=0;
+		gracz[i].iMySpot=-1;
+	}
 }
