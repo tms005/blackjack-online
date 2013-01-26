@@ -13,7 +13,7 @@ extern int stolWinMain();
 extern HWND stolOkno;
 
 HWND stolyOkno;
-CONST CHAR ClassName[]="Lista sto³ów";
+CONST CHAR ClassName[]="Lista stoÂłĂłw";
 CONST CHAR MenuName[]="Menu_Window";
 
 extern HWND hListStoly;
@@ -38,7 +38,7 @@ HWND hlStoly;
 
 struct Buffer{
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
-int ID_USR; // nadawany przez serwer klucz dla ka�dego po��czonego z serwerem u�ytkownika
+int ID_USR; // nadawany przez serwer klucz dla każdego połączonego z serwerem użytkownika
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji
 char cChat[256];
 };
@@ -49,7 +49,7 @@ char pakietStoly[512]= {0};
 /////////////////////////////////////////////////////////deklaracje////////////////////////////////////////////
 void dodajEnter(char str1[]);
 void sklejChary(char str1[], char str2[]);
-void pack(Buffer buff, char (&ref)[512]);
+void pack(Buffer *sbMssg, char cMessage[]);
 ////////////////////////////////////////////////////////////////////
 void pobierzListyStolyOkno();
 void pobierzListyStol();
@@ -67,7 +67,7 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          case WM_CLOSE:       //polecenia dla komunikatu WM_CLOSE
          {
             sbufferStoly.ID=6;
-            pack(sbufferStoly,pakietStoly);
+            pack(&sbufferStoly,pakietStoly);
             send(sock,pakietStoly,sizeof(pakietStoly),0);
             PostQuitMessage(0);
             break;
@@ -79,7 +79,7 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 GetWindowText(hStolyMail, sbufferStoly.cChat, 256);
                 dodajEnter(sbufferStoly.cChat);
                 sbufferStoly.ID=0;
-                pack(sbufferStoly,pakietStoly);
+                pack(&sbufferStoly,pakietStoly);
                 send(sock,pakietStoly,sizeof(pakietStoly),0);
                 SetWindowText(hStolyMail,"");
                 SetFocus(hStolyMail);
@@ -89,19 +89,19 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 int x = SendMessage(hListStoly, LB_GETANCHORINDEX ,LVNI_SELECTED,LVNI_SELECTED)+49;
                 sbufferStoly.ID=4;
                 sbufferStoly.iKey[0]=x;
-                pack(sbufferStoly,pakietStoly);
+                pack(&sbufferStoly,pakietStoly);
                 send(sock,pakietStoly,sizeof(pakietStoly),0);
              }
              else if((HWND)lPar==hUtworz)
              {
                 sbufferStoly.ID=5;
-                pack(sbufferStoly,pakietStoly);
+                pack(&sbufferStoly,pakietStoly);
                 send(sock,pakietStoly,sizeof(pakietStoly),0);
              }
              else if((HWND)lPar==hStolyWyloguj)
              {
                 sbufferStoly.ID=2;
-                pack(sbufferStoly,pakietStoly);
+                pack(&sbufferStoly,pakietStoly);
                 send(sock,pakietStoly,sizeof(pakietStoly),0);
                 ShowWindow(Okno,SW_SHOW);
                 ShowWindow(stolyOkno,SW_HIDE);
@@ -143,7 +143,7 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              break;
          }
          default:
-         return DefWindowProc(hwnd,msg,wPar,lPar);       //domyÅ“lna obsÂ³uga reszty komunikatÃ³w
+         return DefWindowProc(hwnd,msg,wPar,lPar);       //domyĂ…â€ślna obsĂ‚Âługa reszty komunikatĂÂłw
         }
         return 0;
 }
@@ -156,14 +156,14 @@ int WINAPI stolyWinMain ()
     stolywc.lpszClassName = ClassName;                                 //nazwa klasy. przekazanie globalne.
     stolywc.lpfnWndProc = stolyWndProc;                                //
     stolywc.style = 0;                                                 //
-    stolywc.cbSize = sizeof (WNDCLASSEX);                              //rozmiar klasy w bajtach w pamiÃªci
+    stolywc.cbSize = sizeof (WNDCLASSEX);                              //rozmiar klasy w bajtach w pamiĂÂŞci
     stolywc.hIcon = LoadIcon (NULL, IDI_APPLICATION);                  //uchwyt ikony okna
-    stolywc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);                //uchwyt maÂ³ej ikony okna
-    stolywc.hCursor = LoadCursor (NULL, IDC_ARROW);                    //uchwyt kursora - sÂ³uÂ¿y do zaÂ³adowania kursora tzw. "strzaÂ³ki"
+    stolywc.hIconSm = LoadIcon (NULL, IDI_APPLICATION);                //uchwyt maĂ‚Âłej ikony okna
+    stolywc.hCursor = LoadCursor (NULL, IDC_ARROW);                    //uchwyt kursora - sĂ‚ÂłuĂ‚Âży do zaĂ‚Âładowania kursora tzw. "strzaĂ‚Âłki"
     stolywc.lpszMenuName = "Menu_Window";                              //nazwa menu
-    stolywc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 0);               //uchwyt do "pÃªdzla" z tÂ³em
-    stolywc.cbClsExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna klasy
-    stolywc.cbWndExtra = 0;                                            //dodatkowa pamiÃªÃ¦ dla okna utworzona z tej klasy
+    stolywc.hbrBackground = (HBRUSH) (COLOR_WINDOW + 0);               //uchwyt do "pĂÂŞdzla" z tĂ‚Âłem
+    stolywc.cbClsExtra = 0;                                            //dodatkowa pamiĂÂŞĂÂ¦ dla okna klasy
+    stolywc.cbWndExtra = 0;                                            //dodatkowa pamiĂÂŞĂÂ¦ dla okna utworzona z tej klasy
 
     if(RegisterClassEx(&stolywc)==0) return 0;
     stolyOkno=CreateWindowEx(0,ClassName,"CzarnyJacek",WS_OVERLAPPEDWINDOW|WS_CLIPCHILDREN,50,50,600,500,Okno,0,hInstMain,0);
