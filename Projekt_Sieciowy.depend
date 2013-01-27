@@ -269,3 +269,75 @@
 	<stdlib.h>
 	<string.h>
 
+-1 source:c:\users\waku\desktop\blackjack-online-08a506d9df1d\menu.rc
+
+1359278757 source:c:\users\waku\desktop\blackjack-online-08a506d9df1d\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1359278757 source:c:\users\waku\desktop\blackjack-online-08a506d9df1d\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1359278628 source:c:\users\waku\desktop\blackjack-online-08a506d9df1d\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+-1 c:\users\waku\desktop\blackjack-online-08a506d9df1d\funkcje.h
+
+-1 source:c:\users\waku\desktop\git\menu.rc
+
+1359278757 source:c:\users\waku\desktop\git\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1359278757 source:c:\users\waku\desktop\git\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1359279375 source:c:\users\waku\desktop\git\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+-1 c:\users\waku\desktop\git\funkcje.h
+
+1359279375 source:c:\users\addicted\desktop\git\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+-1 c:\users\addicted\desktop\git\funkcje.h
+
+-1 source:c:\users\addicted\desktop\git\menu.rc
+
+1359278757 source:c:\users\addicted\desktop\git\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1359278757 source:c:\users\addicted\desktop\git\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+

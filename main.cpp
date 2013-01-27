@@ -6,7 +6,15 @@
 #include <winsock2.h>
 #include "funkcje.h"
 
-
+#define DEFAULT_BUFLEN					512
+#define DEFAULT_PORT						"2000"
+#define MAX_CLIENTS						12
+#define MAX_TABLES							4
+#define MAX_PLAYERS_PER_TABLE		3
+#define MAX_NAME_LEN					15
+#define MAX_PASS_LEN						40
+#define BEGGINERS_CASH					300
+#define MIN_BID								10
 
 extern int stolyWinMain();
 extern HWND stolyOkno;

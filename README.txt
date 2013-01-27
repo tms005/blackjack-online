@@ -1,4 +1,4 @@
-struct Buffer {
+﻿struct Buffer {
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
 int ID_USR; // nadawany przez serwer klucz dla każdego połączonego z serwerem użytkownika\
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji 
@@ -8,7 +8,7 @@ char cChat[256];
 Moje definicje globalne (Karol):
 ############################################
 #define DEFAULT_BUFLEN					512
-#define DEFAULT_PORT						"27015"
+#define DEFAULT_PORT						"2000"
 #define MAX_CLIENTS						12
 #define MAX_TABLES							4
 #define MAX_PLAYERS_PER_TABLE		3
