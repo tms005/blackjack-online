@@ -1,0 +1,367 @@
+# depslib dependency file v1.0
+1357941908 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\menu.rc
+
+1355750279 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\blackjack.cpp
+	<windows.h>
+	<commctrl.h>
+
+1357693140 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\blackjack_dalej.cpp
+	<windows.h>
+	<commctrl.h>
+
+1355754507 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\blackjack_main.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358179615 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\main.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358108445 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358107868 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\rankokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358176079 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1357914267 source:c:\users\user\desktop\function.cpp
+	<iostream>
+	<ctime>
+	<cstdlib>
+
+1357943668 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\rejestr.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358179615 source:c:\users\user\desktop\projekt sieciowy\projekt_sieciowy\rejest.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358233226 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<string>
+	<iostream>
+
+1357941910 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\menu.rc
+
+1358107870 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\rankokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358179616 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\rejest.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358176080 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358108446 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1357941910 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\blackjack-online\menu.rc
+
+1358107870 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\blackjack-online\rankokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358179616 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\blackjack-online\rejest.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358176080 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\blackjack-online\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358108446 source:c:\users\addicted\desktop\projekt sieciowy\projekt_sieciowy\blackjack-online\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358614926 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\menu.rc
+
+1358526611 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\rankokno.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358179616 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\rejest.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358616770 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358616165 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1358615569 source:d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	"funkcje.h"
+
+1358617936 d:\documents\studia\v\sieci\winapi\klient\projekt_sieciowy\blackjack-online\funkcje.h
+
+1358979269 source:c:\users\addicted\desktop\blackjack-online\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	"funkcje.h"
+
+1358888045 c:\users\addicted\desktop\blackjack-online\funkcje.h
+
+1358614926 source:c:\users\addicted\desktop\blackjack-online\menu.rc
+
+1358888866 source:c:\users\addicted\desktop\blackjack-online\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1358979708 source:c:\users\addicted\desktop\blackjack-online\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1359102476 source:c:\users\addicted\desktop\blackjack-online - kopia\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+1358888045 c:\users\addicted\desktop\blackjack-online - kopia\funkcje.h
+
+1358614926 source:c:\users\addicted\desktop\blackjack-online - kopia\menu.rc
+
+1358979708 source:c:\users\addicted\desktop\blackjack-online - kopia\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358888866 source:c:\users\addicted\desktop\blackjack-online - kopia\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1358767740 source:c:\users\addicted\desktop\najnowsza\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	"funkcje.h"
+
+1358768558 c:\users\addicted\desktop\najnowsza\funkcje.h
+
+1358614926 source:c:\users\addicted\desktop\najnowsza\menu.rc
+
+1358768509 source:c:\users\addicted\desktop\najnowsza\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358725420 source:c:\users\addicted\desktop\najnowsza\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1358614926 source:d:\documents\studia\v\sieci\najnowsza\menu.rc
+
+1358880942 source:d:\documents\studia\v\sieci\najnowsza\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358880942 source:d:\documents\studia\v\sieci\najnowsza\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1358888654 source:d:\documents\studia\v\sieci\najnowsza\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	"funkcje.h"
+
+1358888045 d:\documents\studia\v\sieci\najnowsza\funkcje.h
+
+1358614926 source:c:\users\addicted\desktop\sieci\menu.rc
+
+1359103519 source:c:\users\addicted\desktop\sieci\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358888866 source:c:\users\addicted\desktop\sieci\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1359128100 source:c:\users\addicted\desktop\sieci\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+1358888045 c:\users\addicted\desktop\sieci\funkcje.h
+
+1358614926 source:c:\users\addicted\desktop\najnowsze\sieci\menu.rc
+
+1359103519 source:c:\users\addicted\desktop\najnowsze\sieci\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358888866 source:c:\users\addicted\desktop\najnowsze\sieci\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1359139686 source:c:\users\addicted\desktop\najnowsze\sieci\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+1358888045 c:\users\addicted\desktop\najnowsze\sieci\funkcje.h
+
+1358614926 source:c:\users\addicted\desktop\klient\menu.rc
+
+1359103519 source:c:\users\addicted\desktop\klient\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1358888866 source:c:\users\addicted\desktop\klient\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+-1 source:c:\users\waku\desktop\blackjack-online-08a506d9df1d\menu.rc
+
+1359278757 source:c:\users\waku\desktop\blackjack-online-08a506d9df1d\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1359278757 source:c:\users\waku\desktop\blackjack-online-08a506d9df1d\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1359278628 source:c:\users\waku\desktop\blackjack-online-08a506d9df1d\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+-1 c:\users\waku\desktop\blackjack-online-08a506d9df1d\funkcje.h
+
+-1 source:c:\users\waku\desktop\git\menu.rc
+
+1359278757 source:c:\users\waku\desktop\git\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1359278757 source:c:\users\waku\desktop\git\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1359279375 source:c:\users\waku\desktop\git\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+-1 c:\users\waku\desktop\git\funkcje.h
+
+1359279375 source:c:\users\addicted\desktop\git\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+-1 c:\users\addicted\desktop\git\funkcje.h
+
+-1 source:c:\users\addicted\desktop\git\menu.rc
+
+1359278757 source:c:\users\addicted\desktop\git\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1359278757 source:c:\users\addicted\desktop\git\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
+1359279375 source:d:\documents\studia\v\sieci\blackjack-online\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+-1 d:\documents\studia\v\sieci\blackjack-online\funkcje.h
+
+-1 source:d:\documents\studia\v\sieci\blackjack-online\menu.rc
+
+1359278757 source:d:\documents\studia\v\sieci\blackjack-online\stol.cpp
+	<windows.h>
+	<commctrl.h>
+
+1359278757 source:d:\documents\studia\v\sieci\blackjack-online\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+
