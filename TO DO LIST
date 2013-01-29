@@ -1,0 +1,6 @@
+TO DO :
+
+
+#1 Określenie czy da się utworzyć sprawnie działające zmienne globalne dla klienta.
+#2 Jesli #1 tak, to zastepujemy funkcje czekaj funkcją generującą dane do wyłania na serwer oraz regulującą wysylanie wiadomości. Jednocześnie w switch od 10 wysyla sie te informacje
+#3 Jeżeli #1 nie jest prawdziwy, to przerabiamy winapi. i wracamy do pkt 2.
