@@ -1,7 +1,16 @@
 #include <windows.h>
 #include <commctrl.h>
+#include <iostream>
+#include <stdlib.h>
+#include <string.h>
+#include <queue>
+
+using namespace std;
 
 extern SOCKET sock;
+
+extern char pakiet[512];
+extern queue <char*> kolejka;
 
 extern HINSTANCE hInstMain;
 extern HWND Okno;
@@ -53,10 +62,10 @@ void sklejChary(char str1[], char str2[]);
 void pack(Buffer *sbMssg, char cMessage[]);
 void PrintCard(int iCard, char cKarta[]);//dla kompilacji xd
 Buffer unpack(char ref[512]);//to tez wyjebac jak bedzie glowny switch
+void czyscBuffer(Buffer tempbuff);
 ////////////////////////////////////////////////////////////////////
 void pobierzListyStolyOkno();
 void pobierzListyStol();
-////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LRESULT CALLBACK stolWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)

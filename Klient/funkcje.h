@@ -1,26 +1,20 @@
 #ifndef FUNKCJE_H_INCLUDED
 #define FUNKCJE_H_INCLUDED
 #define SPACE ' '
+#include <queue>
 
+using namespace std;
+
+//Gniazda
 SOCKADDR_IN saddr;
 SOCKET      sock;
-
-HWND hListStoly;
-HWND hListGraczy;
-HWND hListRanking;
-HWND hListRankingPkt;
-HWND hListGraczyOn;
-
-HWND hStolyChat;
-HWND hStolChat;
-
+//Struktury danych
 struct Buffer {
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
 int ID_USR; // nadawany przez serwer klucz dla ka¿dego po³¹czonego z serwerem u¿ytkownika
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji
 char cChat[256];
 };
-
 struct Stol {
 int iIdGraczy[3];//klucze id graczy przy stole
 char cNazwyGraczy[3][20];//nazwy graczy przy stole
@@ -28,40 +22,26 @@ int iStawka;//stawka postawiona
 int iKonto;//stan konto klienta
 char cKarty[4];//karty wszystkich graczy wlacznie z krupierem pod indeksem 0
 };
+//Zmienne danych
+queue <char*> kolejka;
+char pakiet[512];
+//Listy tekstowe
+HWND hListStoly;
+HWND hListGraczy;
+HWND hListRanking;
+HWND hListRankingPkt;
+HWND hListGraczyOn;
+//Pola tekstowe
+HWND hStolyChat;
+HWND hStolChat;
 
-/*void pack(Buffer buff, char ref[512]) //pakowanie - klient
+void czyscBuffer(Buffer tempbuff)
 {
-     int i,j=0;
-        ref[0]=(char)buff.ID;
-        ref[1]=(char)buff.ID_USR;
-    for(i=2;i<18;i++)
-    {
-        ref[i]=(char)buff.iKey[i-2];
-    }
-    for(i=18;i<275;i++)
-    {
-        ref[i]=buff.cChat[i-18];
-    }
+    tempbuff.ID=0;
+    tempbuff.ID_USR=0;
+    for(int i=0;i<16;i++) tempbuff.iKey[i]=0;
+    memset(tempbuff.cChat,0,256);
 }
-
-
-
-Buffer unpack(char ref[512]) //odpakowanie - klient
-{
-     int i;
-     Buffer tempbuff;
-        tempbuff.ID=(int)ref[0];
-        tempbuff.ID_USR=(int)ref[1];
-    for(i=2;i<18;i++)
-    {
-        tempbuff.iKey[i-2]=(int)ref[i];
-    }
-    for(i=18;i<275;i++)
-    {
-        tempbuff.cChat[i-18]=ref[i];
-    }
-return tempbuff;
-}*/
 
 void bbbIntToChar(int* source,
 							char* destination)
@@ -237,27 +217,32 @@ void pobierzListyStolyOkno()
 {
     Buffer tempbuff;
     char tempakiet[512] = {0};
+    int i;
 
+    czyscBuffer(tempbuff);
     tempbuff.ID=3;
     tempbuff.iKey[0]=1;//graczy w rankingu
     pack(&tempbuff,tempakiet);
-    send(sock,tempakiet,sizeof(tempakiet),0);
-    Sleep(50);
+    kolejka.push(tempakiet);
+
+    czyscBuffer(tempbuff);
+    tempbuff.ID=3;
     tempbuff.iKey[0]=2;//graczy online
     pack(&tempbuff,tempakiet);
-    send(sock,tempakiet,sizeof(tempakiet),0);
+    kolejka.push(tempakiet);
 }
 
 void pobierzListyStol()
 {
     Buffer tempbuff;
     char tempakiet[512] = {0};
+    int i;
 
+    czyscBuffer(tempbuff);
     tempbuff.ID=3;
     tempbuff.iKey[0]=0;//info o stolach
     pack(&tempbuff,tempakiet);
-    send(sock,tempakiet,sizeof(tempakiet),0);
+    kolejka.push(tempakiet);
 }
-
 
 #endif // FUNKCJE_H_INCLUDED

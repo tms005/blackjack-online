@@ -365,3 +365,33 @@
 	<stdlib.h>
 	<string.h>
 
+1359484229 source:c:\users\addicted\desktop\blackjack-online\klient\main.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	"funkcje.h"
+
+1359484564 c:\users\addicted\desktop\blackjack-online\klient\funkcje.h
+	<queue>
+
+-1 source:c:\users\addicted\desktop\blackjack-online\klient\menu.rc
+
+1359484172 source:c:\users\addicted\desktop\blackjack-online\klient\stol.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<queue>
+
+1359485719 source:c:\users\addicted\desktop\blackjack-online\klient\stolyokno.cpp
+	<windows.h>
+	<commctrl.h>
+	<iostream>
+	<stdlib.h>
+	<string.h>
+	<queue>
+

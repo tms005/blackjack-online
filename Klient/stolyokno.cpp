@@ -3,8 +3,14 @@
 #include <iostream>
 #include <stdlib.h>
 #include <string.h>
+#include <queue>
+
+using namespace std;
 
 extern SOCKET sock;
+
+extern char pakiet[512];
+extern queue <char*> kolejka;
 
 extern HINSTANCE hInstMain;
 extern HWND Okno;
@@ -22,7 +28,6 @@ extern HWND hListRanking;
 extern HWND hListRankingPkt;
 
 HWND hDolacz;
-HWND hUtworz;
 
 extern HWND hStolyChat;
 HWND hStolyMail;
@@ -44,31 +49,27 @@ char cChat[256];
 };
 
 Buffer sbufferStoly;///////////obsluga naszej ramki dla okna Stoly
-char pakietStoly[512]= {0};
 
 /////////////////////////////////////////////////////////deklaracje////////////////////////////////////////////
 void dodajEnter(char str1[]);
 void sklejChary(char str1[], char str2[]);
 void pack(Buffer *sbMssg, char cMessage[]);
+void czyscBuffer(Buffer tempbuff);
 ////////////////////////////////////////////////////////////////////
 void pobierzListyStolyOkno();
 void pobierzListyStol();
-////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
 {
         switch(msg)
         {
-         /*case WM_CREATE:
-         {
-            break;
-         }*/
          case WM_CLOSE:       //polecenia dla komunikatu WM_CLOSE
          {
+            czyscBuffer(sbufferStoly);
             sbufferStoly.ID=6;
-            pack(&sbufferStoly,pakietStoly);
-            send(sock,pakietStoly,sizeof(pakietStoly),0);
+            pack(&sbufferStoly,pakiet);
+            kolejka.push(pakiet);
             PostQuitMessage(0);
             break;
          }
@@ -76,33 +77,30 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          {
              if((HWND)lPar==hStolyWyslij)
              {
+                czyscBuffer(sbufferStoly);
                 GetWindowText(hStolyMail, sbufferStoly.cChat, 256);
                 dodajEnter(sbufferStoly.cChat);
                 sbufferStoly.ID=0;
-                pack(&sbufferStoly,pakietStoly);
-                send(sock,pakietStoly,sizeof(pakietStoly),0);
+                pack(&sbufferStoly,pakiet);
+                kolejka.push(pakiet);
                 SetWindowText(hStolyMail,"");
                 SetFocus(hStolyMail);
              }
              else if((HWND)lPar==hDolacz)
              {
-                int x = SendMessage(hListStoly, LB_GETANCHORINDEX ,LVNI_SELECTED,LVNI_SELECTED)+49;
+                czyscBuffer(sbufferStoly);
+                int y = SendMessage(hListStoly, LB_GETANCHORINDEX ,LVNI_SELECTED,LVNI_SELECTED)+49;
                 sbufferStoly.ID=4;
-                sbufferStoly.iKey[0]=x;
-                pack(&sbufferStoly,pakietStoly);
-                send(sock,pakietStoly,sizeof(pakietStoly),0);
-             }
-             else if((HWND)lPar==hUtworz)
-             {
-                sbufferStoly.ID=5;
-                pack(&sbufferStoly,pakietStoly);
-                send(sock,pakietStoly,sizeof(pakietStoly),0);
+                sbufferStoly.iKey[0]=y;
+                pack(&sbufferStoly,pakiet);
+                kolejka.push(pakiet);
              }
              else if((HWND)lPar==hStolyWyloguj)
              {
+                czyscBuffer(sbufferStoly);
                 sbufferStoly.ID=2;
-                pack(&sbufferStoly,pakietStoly);
-                send(sock,pakietStoly,sizeof(pakietStoly),0);
+                pack(&sbufferStoly,pakiet);
+                kolejka.push(pakiet);
                 ShowWindow(Okno,SW_SHOW);
                 ShowWindow(stolyOkno,SW_HIDE);
                 UpdateWindow(Okno);
@@ -182,7 +180,6 @@ int WINAPI stolyWinMain ()
     hListRankingPkt = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 345, 30, 50, 180, stolyOkno, NULL, hInstMain, NULL);
 
     hDolacz=CreateWindowEx(0,"BUTTON","Dolacz",WS_CHILD|WS_VISIBLE,25,205,75,20,stolyOkno,0,hInstMain,0);
-    hUtworz=CreateWindowEx(0,"BUTTON","Utworz",WS_CHILD|WS_VISIBLE,110,205,75,20,stolyOkno,0,hInstMain,0);
 
     hlOnline=CreateWindowEx(0,"STATIC","Online",WS_CHILD|WS_VISIBLE,470,10,50,20,stolyOkno,0,hInstMain,0);
     hListGraczy = CreateWindowEx(WS_EX_CLIENTEDGE, "LISTBOX", NULL,WS_VSCROLL|WS_CHILD|WS_VISIBLE|WS_BORDER, 425, 30, 140, 360, stolyOkno, NULL, hInstMain, NULL);

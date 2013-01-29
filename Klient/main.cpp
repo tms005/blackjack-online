@@ -6,15 +6,7 @@
 #include <winsock2.h>
 #include "funkcje.h"
 
-#define DEFAULT_BUFLEN					512
-#define DEFAULT_PORT						"2000"
-#define MAX_CLIENTS						12
-#define MAX_TABLES							4
-#define MAX_PLAYERS_PER_TABLE		3
-#define MAX_NAME_LEN					15
-#define MAX_PASS_LEN						40
-#define BEGGINERS_CASH					300
-#define MIN_BID								10
+using namespace std;
 
 extern int stolyWinMain();
 extern HWND stolyOkno;
@@ -42,20 +34,16 @@ Buffer sbuffer;
 Buffer klient;
 Stol pierwszy, drugi, trzeci, czwarty;
 
-char pakiet[512] = {0};
 char cKartaStol[256] = {0};
 char cNazwaGracza[256] = {0};
 int klientsrodki=0,klientstol=0;
 int hold=0,j=0,i=0;
-int dg=0,dn=0,k=0,x=0;
+int dg=0,dn=0,k=0;
 
 DWORD WINAPI NetThread(LPVOID ctx)
 {
     SOCKET* sockThread=(SOCKET*)ctx;
     int     ret;
-
-    // A delay
-    Sleep(1000);
 
     // Receive data
     for(;;)
@@ -64,7 +52,7 @@ DWORD WINAPI NetThread(LPVOID ctx)
     ret = recv(*sockThread, pakiet, 512, 0);
     if (ret == SOCKET_ERROR)
     {
-     //  MessageBox(0, "recv failed", "Error", 0);
+       MessageBox(0, "recv failed", "Error", 0);
     }
     else
             {
@@ -72,57 +60,28 @@ DWORD WINAPI NetThread(LPVOID ctx)
 		    switch(sbuffer.ID)
                 {
                 case 0: //WIADOMOSC CZATU:
-                        char cNazwaGracza[256];
+                        int x;
+                        x=0;
                         if(sbuffer.ID_USR==klient.ID_USR)
                         {
-                            cNazwaGracza[0]='J'; cNazwaGracza[1]='a'; cNazwaGracza[2]=':';
-                            sklejChary(cNazwaGracza,sbuffer.cChat);
-                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cNazwaGracza) );//bo po co rozkminiac gdzie wyswietlic xd
-                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cNazwaGracza) );
+                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );//bo po co rozkminiac gdzie wyswietlic xd
+                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
                         }
-                        else
-                        {
-                        for(i=0;i<3;i++)
-                            if(sbuffer.ID_USR==pierwszy.iIdGraczy[i])
-                                {
-                                    x=1;
-                                    przepiszChary(cNazwaGracza,pierwszy.cNazwyGraczy[i]);
-                                    hold = strlen(cNazwaGracza);
-                                    cNazwaGracza[hold] = ':';
-                                }
-                        for(i=0;i<3;i++)
-                            if(sbuffer.ID_USR==drugi.iIdGraczy[i])
-                                {
-                                    x=2;
-                                    przepiszChary(cNazwaGracza,drugi.cNazwyGraczy[i]);
-                                    hold = strlen(cNazwaGracza);
-                                    cNazwaGracza[hold] = ':';
-                                }
-                        for(i=0;i<3;i++)
-                            if(sbuffer.ID_USR==trzeci.iIdGraczy[i])
-                                {
-                                    x=3;
-                                    przepiszChary(cNazwaGracza,trzeci.cNazwyGraczy[i]);
-                                    hold = strlen(cNazwaGracza);
-                                    cNazwaGracza[hold] = ':';
-                                }
-                        for(i=0;i<3;i++)
-                            if(sbuffer.ID_USR==czwarty.iIdGraczy[i])
-                                {
-                                    x=4;
-                                    przepiszChary(cNazwaGracza,czwarty.cNazwyGraczy[i]);
-                                    hold = strlen(cNazwaGracza);
-                                    cNazwaGracza[hold] = ':';
-                                }
-                        if(klientstol==x)
+                            else
                             {
-                            sklejChary(cNazwaGracza,sbuffer.cChat);
-                            SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cNazwaGracza) );
+                                for(i=0;i<3;i++)
+                                    if(sbuffer.ID_USR==pierwszy.iIdGraczy[i]) x=1;
+                                for(i=0;i<3;i++)
+                                    if(sbuffer.ID_USR==drugi.iIdGraczy[i]) x=2;
+                                for(i=0;i<3;i++)
+                                    if(sbuffer.ID_USR==trzeci.iIdGraczy[i]) x=3;
+                                for(i=0;i<3;i++)
+                                    if(sbuffer.ID_USR==czwarty.iIdGraczy[i]) x=4;
+
+                                if(x==0)
+                                    SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
+                                    else if(klientstol==x) SendMessage(hStolChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(sbuffer.cChat) );
                             }
-                        else if(x==0)
-                            //wyszukanie nazwy gracza
-                            SendMessage(hStolyChat, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cNazwaGracza) );
-                        }
                     break;
 
                 case 1: //UTWORZENIE KONTA:
@@ -147,9 +106,7 @@ DWORD WINAPI NetThread(LPVOID ctx)
                             case 1: //jestes zalogowany
                                     klient.ID_USR=sbuffer.iKey[1];
                                     klientsrodki=sbuffer.iKey[2];
-                                    Sleep(1000);
                                     pobierzListyStolyOkno();
-                                    Sleep(1000);
                                     ShowWindow(stolyOkno,SW_SHOW);
                                     ShowWindow(Okno,SW_HIDE);
                                     UpdateWindow(stolyOkno);
@@ -167,7 +124,7 @@ DWORD WINAPI NetThread(LPVOID ctx)
                                     EnableWindow(hRejestr, true);
                                 break;
                             default:
-                                    MessageBox(0,"Wystapil nieoczekiwany blad! case 2","Ha!",MB_OK);
+                                    MessageBox(0,"Wylogowano!","Ha!",MB_OK);
                                     EnableWindow(hLogin, true);
                                     EnableWindow(hRejestr, true);
                             }
@@ -491,7 +448,22 @@ DWORD WINAPI NetThread(LPVOID ctx)
                     break;
 
                 case 9: //INFORMACJA O TYM, ZE SERWER OCZEKUJE NA PODJECIE DECYZJI WZG KOLEJNEJ TURY GRY:
-                        MessageBox(0,"Rusz dupe! case 9","Ha!",MB_OK);//Serwer wysyla ta informacje do klienta, kiedy rozpoczyna sie jego runda.
+                            MessageBox(0,"Rusz dupe! case 9","Ha!",MB_OK);//Serwer wysyla ta informacje do klienta, kiedy rozpoczyna sie jego runda.
+                    break;
+
+                case 10: //TOKEN
+                        if(kolejka.empty())
+                        {
+                            czyscBuffer(sbuffer);
+                            sbuffer.ID=10;
+                            pack(&sbuffer,pakiet);
+                            send(sock,pakiet,512,0);
+                        }
+                        else
+                        {
+                            send(sock,kolejka.front(),512,0);
+                            kolejka.pop();
+                        }
                     break;
 
                 default:
@@ -516,9 +488,10 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          }
          case WM_DESTROY:
          {
+            czyscBuffer(sbuffer);
             sbuffer.ID=6;
             pack(&sbuffer,pakiet);
-            send(sock,pakiet,512,0);
+            kolejka.push(pakiet);
             closesocket(sock);
             WSACleanup();
             PostQuitMessage(0);
@@ -528,6 +501,7 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
          {
              if((HWND)lPar==hLogin)
              {
+                czyscBuffer(sbuffer);
                 EnableWindow(hLogin, false);
                 EnableWindow(hRejestr, false);
                 CHAR cLogin[20];
@@ -538,10 +512,11 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 przepiszChary(sbuffer.cChat, cLogin);
                 sbuffer.ID=2;
                 pack(&sbuffer,pakiet);
-                send(sock,pakiet,512,0);
+                kolejka.push(pakiet);
              }
              else if((HWND)lPar==hRejestr)
              {
+                czyscBuffer(sbuffer);
                 EnableWindow(hLogin, false);
                 EnableWindow(hRejestr, false);
                 CHAR cLogin[20];
@@ -549,14 +524,10 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                 CHAR cPass[20];
                 GetWindowText(hPassWpisz, cPass, 20);
                 sklejChary(cLogin,cPass);//skleja login z haslem oddzielajac spacja
-            MessageBox(0, cLogin, "Error", 0);
                 przepiszChary(sbuffer.cChat, cLogin);
-            MessageBox(0, sbuffer.cChat, "Error", 0);
                 sbuffer.ID=1;
                 pack(&sbuffer,pakiet);
-            MessageBox(0, pakiet, "Error", 0);
-                send(sock, pakiet, 512, 0);
-                //send(sock,pakiet,sizeof(pakiet),0);
+                kolejka.push(pakiet);
              }
              else if(wPar==10)
              {
@@ -670,14 +641,14 @@ int WINAPI WinMain (HINSTANCE hInst, HINSTANCE hPrevInstance, LPSTR lpCmdLine, i
         CopyMemory(&server.sin_addr, host->h_addr_list[0],
             host->h_length);
     }
-    // Connect to the server
+// Connect to the server
     if (connect(sock, (struct sockaddr *)&server,
         sizeof(server)) == SOCKET_ERROR)
     {
         MessageBox(0, "connect failed", "Error", 0);
         return 1;
     }
-
+// Tworzenie watku klienta
     HANDLE        hNetThread;
     DWORD         dwNetThreadId;
     hNetThread = CreateThread(NULL, 0, NetThread,
