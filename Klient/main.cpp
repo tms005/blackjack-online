@@ -431,8 +431,14 @@ DWORD WINAPI NetThread(LPVOID ctx)
                                         }
                                 break;
                             case 3: //koniec rozgrywki
-                                    //pobranie kart krupiera czyli bedzie send
-                                    if(sbuffer.iKey[2]==1)
+                                    int wynik;
+                                    wynik=sbuffer.iKey[2];
+                                    czyscBuffer(sbuffer);
+                                    sbuffer.ID=8;
+                                    sbuffer.iKey[0]=-1;
+                                    pack(&sbuffer,pakiet);
+                                    kolejka.push(pakiet);
+                                    if(wynik==1)
                                     MessageBox(0,"Wygrales! case 7","Ha!",MB_OK);//jezeli bedzie potrzeba to sie zrobi w gui miejsce i licznik na wygrane i przegrane/prowizorka
                                     else MessageBox(0,"Lo0oser! case 7","Ha!",MB_OK);
                                 break;
@@ -441,12 +447,23 @@ DWORD WINAPI NetThread(LPVOID ctx)
                             }
                     break;
 
-                case 8: //TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
-                            MessageBox(0,"do zrobienia! case 8","Ha!",MB_OK);//do zrobinia
-                    break;
+                /*case 8: //TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
+                        if(sbuffer.iKey[0]==-1)
+                        {
+                            for(i=0;i<sbuffer.iKey[1];i++)
+                        }
+                        else if(sbuffer.iKey[0]==0)
+                        {
 
+                        }
+                        else if(sbuffer.iKey[0]>0)
+                        {
+                            for(i=0;i<sbuffer.iKey[1];i++)
+                        }
+                    break;
+*/
                 case 9: //INFORMACJA O TYM, ZE SERWER OCZEKUJE NA PODJECIE DECYZJI WZG KOLEJNEJ TURY GRY:
-                            MessageBox(0,"Rusz dupe! case 9","Ha!",MB_OK);//Serwer wysyla ta informacje do klienta, kiedy rozpoczyna sie jego runda.
+                        MessageBox(0,"Rusz dupe! case 9","Ha!",MB_OK);//Serwer wysyla ta informacje do klienta, kiedy rozpoczyna sie jego runda.
                     break;
 
                 case 10: //TOKEN
@@ -469,7 +486,6 @@ DWORD WINAPI NetThread(LPVOID ctx)
                 }
             }
     }
-
     closesocket(sock);
 }
 
@@ -558,6 +574,26 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(stolOkno,SW_HIDE);
              }
              break;
+         }
+        case WM_KEYDOWN:
+         {
+             switch (wPar)
+            {
+                case VK_RETURN:
+
+
+
+                    break;
+
+                case VK_TAB:
+
+
+
+                    break;
+
+                default:
+                    break;
+            }
          }
          default:
          return DefWindowProc(hwnd,msg,wPar,lPar);       //domyÄ‚â€¦Ă‚â€ślna obsÄ‚â€šĂ‚Ĺ‚uga reszty komunikatÄ‚ÂĂ‚Ĺ‚w

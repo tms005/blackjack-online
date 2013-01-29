@@ -128,6 +128,17 @@ LRESULT CALLBACK stolyWndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
              }
+             else if(wPar==VK_RETURN)
+             {
+                czyscBuffer(sbufferStoly);
+                GetWindowText(hStolyMail, sbufferStoly.cChat, 256);
+                dodajEnter(sbufferStoly.cChat);
+                sbufferStoly.ID=0;
+                pack(&sbufferStoly,pakiet);
+                kolejka.push(pakiet);
+                SetWindowText(hStolyMail,"");
+                SetFocus(hStolyMail);
+             }
              break;
          }
          default:

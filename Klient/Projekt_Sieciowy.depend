@@ -365,7 +365,7 @@
 	<stdlib.h>
 	<string.h>
 
-1359490994 source:c:\users\addicted\desktop\blackjack-online\klient\main.cpp
+1359495755 source:c:\users\addicted\desktop\blackjack-online\klient\main.cpp
 	<windows.h>
 	<commctrl.h>
 	<iostream>
@@ -377,7 +377,7 @@
 1359490031 c:\users\addicted\desktop\blackjack-online\klient\funkcje.h
 	<queue>
 
--1 source:c:\users\addicted\desktop\blackjack-online\klient\menu.rc
+1359494620 source:c:\users\addicted\desktop\blackjack-online\klient\menu.rc
 
 1359491535 source:c:\users\addicted\desktop\blackjack-online\klient\stol.cpp
 	<windows.h>
@@ -387,7 +387,7 @@
 	<string.h>
 	<queue>
 
-1359492010 source:c:\users\addicted\desktop\blackjack-online\klient\stolyokno.cpp
+1359496806 source:c:\users\addicted\desktop\blackjack-online\klient\stolyokno.cpp
 	<windows.h>
 	<commctrl.h>
 	<iostream>
