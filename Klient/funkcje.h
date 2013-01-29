@@ -31,6 +31,10 @@ HWND hListGraczy;
 HWND hListRanking;
 HWND hListRankingPkt;
 HWND hListGraczyOn;
+HWND hListKartKrupier;
+HWND hListKartGracz1;
+HWND hListKartGracz2;
+HWND hListKartGracz3;
 //Pola tekstowe
 HWND hStolyChat;
 HWND hStolChat;
@@ -216,15 +220,17 @@ void PrintCard(int iCard, char cKarta[]) {
 void pobierzListyStolyOkno()
 {
     Buffer tempbuff;
-    char tempakiet[512] = {0};
+    char tempakiet[512];
     int i;
 
+    memset(tempakiet,0,512);
     czyscBuffer(tempbuff);
     tempbuff.ID=3;
     tempbuff.iKey[0]=1;//graczy w rankingu
     pack(&tempbuff,tempakiet);
     kolejka.push(tempakiet);
 
+    memset(tempakiet,0,512);
     czyscBuffer(tempbuff);
     tempbuff.ID=3;
     tempbuff.iKey[0]=2;//graczy online
@@ -235,7 +241,7 @@ void pobierzListyStolyOkno()
 void pobierzListyStol()
 {
     Buffer tempbuff;
-    char tempakiet[512] = {0};
+    char tempakiet[512];
     int i;
 
     czyscBuffer(tempbuff);

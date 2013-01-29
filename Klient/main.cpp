@@ -7,38 +7,36 @@
 #include "funkcje.h"
 
 using namespace std;
-
+//Okna
 extern int stolyWinMain();
 extern HWND stolyOkno;
-
 extern int stolWinMain();
 extern HWND stolOkno;
-
-HWND hEdit;
 CONST CHAR ClassName[]="GameWindow";
 CONST CHAR MenuName[]="Menu_Window";
-
 MSG msgs; //struktura na komunikatÄ‚ÂĂ‚Ĺ‚w
 HINSTANCE hInstMain;
-
 HWND Okno;
-HWND hLogo;
-HWND hNick;
-HWND hNickWpisz;
-HWND hPass;
-HWND hPassWpisz;
-HWND hLogin;
-HWND hRejestr;
-
+//Zmienne danych
 Buffer sbuffer;
 Buffer klient;
 Stol pierwszy, drugi, trzeci, czwarty;
-
-char cKartaStol[256] = {0};
-char cNazwaGracza[256] = {0};
+char cKartaStol[256];
+char cNazwaGracza[256];
 int klientsrodki=0,klientstol=0;
+//Zmienne pomocnicze
 int hold=0,j=0,i=0;
 int dg=0,dn=0,k=0;
+//Pola tekstowe
+HWND hNickWpisz;
+HWND hPassWpisz;
+//Buttony
+HWND hLogin;
+HWND hRejestr;
+//Etykiety
+HWND hLogo;
+HWND hNick;
+HWND hPass;
 
 DWORD WINAPI NetThread(LPVOID ctx)
 {
@@ -107,6 +105,7 @@ DWORD WINAPI NetThread(LPVOID ctx)
                                     klient.ID_USR=sbuffer.iKey[1];
                                     klientsrodki=sbuffer.iKey[2];
                                     pobierzListyStolyOkno();
+                                    pobierzListyStol();
                                     ShowWindow(stolyOkno,SW_SHOW);
                                     ShowWindow(Okno,SW_HIDE);
                                     UpdateWindow(stolyOkno);
@@ -292,72 +291,71 @@ DWORD WINAPI NetThread(LPVOID ctx)
                                                 if(sbuffer.ID_USR==pierwszy.iIdGraczy[0])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 0
+                                                    SendMessage(hListKartGracz1, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==pierwszy.iIdGraczy[1])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz2, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==pierwszy.iIdGraczy[2])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz3, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                             break;
                                         case 2: //drugi stol
                                                 if(sbuffer.ID_USR==drugi.iIdGraczy[0])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 0
+                                                    SendMessage(hListKartGracz1, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==drugi.iIdGraczy[1])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz2, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==drugi.iIdGraczy[2])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz3, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                             break;
                                         case 3: //trzeci stol
                                                 if(sbuffer.ID_USR==trzeci.iIdGraczy[0])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 0
+                                                    SendMessage(hListKartGracz1, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==trzeci.iIdGraczy[1])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz2, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==trzeci.iIdGraczy[2])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz3, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                             break;
                                         case 4: //czwarty stol
                                                 if(sbuffer.ID_USR==czwarty.iIdGraczy[0])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 0
+                                                    SendMessage(hListKartGracz1, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==czwarty.iIdGraczy[1])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz2, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==czwarty.iIdGraczy[2])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz3, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                             break;
                                         }
-
                                 break;
                             case 2: //ktos podbil stawke, dobieramy tez karte automatycznie// nie wiem czy zrobimy wyswietlanie stawek wiec narazie pomijam
                                     switch(klientstol)//w zaleznosci przy ktorym stole siedzimy to zeby wiedzial wsrod ktorych ludzi go szukac
@@ -366,71 +364,71 @@ DWORD WINAPI NetThread(LPVOID ctx)
                                                 if(sbuffer.ID_USR==pierwszy.iIdGraczy[0])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 0
+                                                    SendMessage(hListKartGracz1, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==pierwszy.iIdGraczy[1])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz2, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==pierwszy.iIdGraczy[2])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz3, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                             break;
                                         case 2: //drugi stol
                                                 if(sbuffer.ID_USR==drugi.iIdGraczy[0])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 0
+                                                    SendMessage(hListKartGracz1, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==drugi.iIdGraczy[1])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz2, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==drugi.iIdGraczy[2])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz3, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                             break;
                                         case 3: //trzeci stol
                                                 if(sbuffer.ID_USR==trzeci.iIdGraczy[0])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 0
+                                                    SendMessage(hListKartGracz1, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==trzeci.iIdGraczy[1])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz2, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==trzeci.iIdGraczy[2])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz3, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                             break;
                                         case 4: //czwarty stol
                                                 if(sbuffer.ID_USR==czwarty.iIdGraczy[0])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 0
+                                                    SendMessage(hListKartGracz1, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==czwarty.iIdGraczy[1])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz2, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
                                                 else if(sbuffer.ID_USR==czwarty.iIdGraczy[2])
                                                 {
                                                     PrintCard(sbuffer.iKey[1],cKartaStol);
-                                                    //wyslanie karty do konkretnej listy 1
+                                                    SendMessage(hListKartGracz3, EM_REPLACESEL, WPARAM(TRUE), LPARAM(cKartaStol) );
                                                 }
-                                        }
                                             break;
+                                        }
                                 break;
                             case 3: //koniec rozgrywki
                                     //pobranie kart krupiera czyli bedzie send
@@ -531,7 +529,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              }
              else if(wPar==10)
              {
-                 //ShowWindow(Okno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(Okno,SW_SHOW);
@@ -539,7 +536,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              else if(wPar==11)
              {
                  ShowWindow(Okno,SW_HIDE);
-                 //ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_SHOW);
              }
@@ -553,7 +549,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
              {
                  ShowWindow(Okno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
-                 //ShowWindow(stolOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_SHOW);
              }
              else if(wPar==14)
@@ -561,7 +556,6 @@ LRESULT CALLBACK WndProc(HWND hwnd,UINT msg,WPARAM wPar,LPARAM lPar)
                  ShowWindow(Okno,SW_HIDE);
                  ShowWindow(stolyOkno,SW_HIDE);
                  ShowWindow(stolOkno,SW_HIDE);
-                 //ShowWindow(rejestrOkno,SW_HIDE);
              }
              break;
          }
