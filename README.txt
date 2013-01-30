@@ -1,4 +1,4 @@
-﻿struct Buffer {
+ struct Buffer {
 int ID; //identyfikator funkcji , patrz dalej dostepne klucze
 int ID_USR; // nadawany przez serwer klucz dla każdego połączonego z serwerem użytkownika\
 int iKey[16]; // w tym polu mamy kolejne argumenty dla funkcji 
@@ -84,10 +84,13 @@ TRANSFER DANYCH O KARTACH GRACZY/KRUPIERA:
 
 				jesli iKey[0] > 0 id gracza ktorego karty chcesz pobrac
 				
-
 --------------------------------------------------------------------------
+INFORMACJA O TYM, ZE KLIENT NIE MA NIC DO ZAKOMUNIKOWANIA SERWEROWI
 
+[ ID ]: 10
 
+Klient odsyła ten pakiet do serwera w przypadku. gdy gracz nie podjął żadnej akcji wymagającej przesłania komunikatu na serwer.
+--------------------------------------------------------------------------
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,11 +137,9 @@ JESLI iKey[0] == 0
 		UWAGA! Zalozenie: jesli przy ktoryms miejscu przy stoliku nie siedzi gracz, to nick nalezy po prostu do pierwszego kolejnego przy ktorym siedzi.
 JESLI iKey[0] == 1
 
-		[ iKey[1-5] ]:	id 5 najlepszych graczy (miejsce zaleznym od indeksu iKey, im nizszy indeks, tym gracz lepszy) 
-
-		[ iKey[6-10] ]:	punkty 5 najlepszych graczy (miejsce zaleznym od indeksu iKey, im nizszy indeks, tym gracz lepszy) 
+		iKey[1-10] ]:	punkty 10 najlepszych graczy (miejsce zaleznym od indeksu iKey, im nizszy indeks, tym gracz lepszy) 
 		
-		[ cChat[ ] ] :	począwszy od pola 0 az do wyczerpania limitu oddzielone spacjami nicki 5 najlepszych graczy 
+		[ cChat[ ] ] :	począwszy od pola 0 az do wyczerpania limitu oddzielone spacjami nicki 10 najlepszych graczy (Uwaga! Szukajcie znaku końca ciągu znaków ('\0') spacji bądź przekroczenia indeksu w buforze odbioru.
 
 
 JESLI iKey[0] == 2
@@ -206,4 +207,11 @@ INFORMACJA O TYM, ZE SERWER OCZEKUJE NA PODJECIE DECYZJI WZG KOLEJNEJ TURY GRY
 [ ID ]: 9
 
 Serwer wysyla ta informacje do klienta, kiedy rozpoczyna sie jego runda.
+
+--------------------------------------------------------------------------
+INFORMACJA O TYM, ZE SERWER MOŻE ODBIERAĆ RZĄDANIA OD KLIENTA
+
+[ ID ]: 10
+
+Serwer wysyla ta informacje do klienta, kiedy otrzymuje prawa do wykonania czynności.
 --------------------------------------------------------------------------
