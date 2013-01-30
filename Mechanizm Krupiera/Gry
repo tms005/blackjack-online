@@ -1,11 +1,23 @@
 To odpowiedź na mail kamila dot. niepełnej obsługi gry. Przeczytaj, jeśli masz jakieś wątpliwości/sugestie dopisz się, postaramy się razem to ulepszyć o ile dotychczasowy algorytm nie będzie wystarczająco prosty/stabilny w działaniu.
 
 
-ID = 9 mówi o tym, ze teraz jest Twoja tura w podejmowaniu decyzji o grze. Ogólnie mówi: teraz grasz, wybieraj. Puki serwer nie przysle danemu klientowi 9, ten nie moze pobierac karty. Gra w ogóle rozpoczyna się od tego momentu, w którym pierwsza osoba która dołączyła do stolika (lub kolejna, jeśli pierwsza wyszła po tym wydarzeniu) kliknie albo pobierz, albo podwój. I tyle w temacie.
+ID = 9 mówi o tym, ze teraz jest Twoja tura w podejmowaniu decyzji o grze. Ogólnie mówi: teraz grasz, wybieraj. Puki serwer nie przysle danemu klientowi 9, ten nie moze pobierac
+karty. Gra w ogóle rozpoczyna się od tego momentu, w którym pierwsza osoba która dołączyła do stolika (lub kolejna, jeśli pierwsza wyszła po tym wydarzeniu) kliknie albo pobierz,
+albo podwój. I tyle w temacie.
 
-Ogólnie opiszę Ci jak gra ma postępować. Do końca nie jest tak zaimplementowana, ale zamierzam właśnie do takiej postaci to poprawić. Jeśli masz jakieś spostrzeżenia/sugestie, to wal.
+Ogólnie opiszę Ci jak gra ma postępować. Do końca nie jest tak zaimplementowana, ale zamierzam właśnie do takiej postaci to poprawić. Jeśli masz jakieś spostrzeżenia/sugestie, to
+wal.
 
-Gracze dosiadają się do stolika i odłączają w dowolnym momencie. Jeśli gra została rozpoczęta przez pierwszego gracza, to gracze, którzy dosiedli się po tym jak pobrał pierwsze karty w danej rundzie rozgrywki nie mają prawa grać. Rundę rozumieć tutaj należy jako, czas w którym wszyscy gracze przegrali lub spasowali (tzn. został tylko krupier, któremu pobieram karty), po czym gra decyduje o tym kto wygrał, a kto przegrał i wysyła komunikat o tym, oraz zeruje wartości na stoliku, tak by gracze, którzy dosiedli się do stolika już w czasie rundy mogli dołączyć do następnej. W kolejnym "ruchu" gra losuje jednego z graczy obecnych przy stoliku i wysyła mu ID=9, a iKey[0] =2  by wiedział, że jest pierwszy i że to on inicjuje kolejną rundkę gry, Pozostali gracze otrzymują również ID=9 i iKey[0]=0 , zatem należy założyć że od tego momentu nie mogą oni rozpocząć gry, ale dostają oni karty po tym jak pierwszy gracz rozpoczął rozgrywkę i powinieneś pobrać z serwera informacje o tych kartach zanim dasz im wykonać ruch. Każdy kolejny ruch rozpoczyna się od wysłania id=9 i iKey[0]=1, co oznacza, ze dany klient ma teraz czas na decyzje czy chce pobrać kartę, podwoić (uwaga tylko w pierwszej rundzie(!),  potem serwer nie odpowiada na zapytanie o podwojenie w rundzie innej niż pierwsza) albo spasować. Gra się kończy w momencie kiedy serwer przesyła do wszystkich klientów ID =7 i iKey[0]=3. Wiem, że dopiero to rozszerzyłem, ale postanowiłem ulepszyć mechanizm gry, byś nie musiał się domyślać kiedy i co należy pobierać info z serwera. Z chęcią rozpatrzę kolejne problemy jeśli jakieś widzisz.
+Gracze dosiadają się do stolika i odłączają w dowolnym momencie. Jeśli gra została rozpoczęta przez pierwszego gracza, to gracze, którzy dosiedli się po tym jak pobrał pierwsze
+karty w danej rundzie rozgrywki nie mają prawa grać. Rundę rozumieć tutaj należy jako, czas w którym wszyscy gracze przegrali lub spasowali (tzn. został tylko krupier, któremu
+pobieram karty), po czym gra decyduje o tym kto wygrał, a kto przegrał i wysyła komunikat o tym, oraz zeruje wartości na stoliku, tak by gracze, którzy dosiedli się do stolika już w
+czasie rundy mogli dołączyć do następnej. W kolejnym "ruchu" gra losuje jednego z graczy obecnych przy stoliku i wysyła mu ID=9, a iKey[0] =2  by wiedział, że jest pierwszy i że to
+on inicjuje kolejną rundkę gry, Pozostali gracze otrzymują również ID=9 i iKey[0]=0 , zatem należy założyć że od tego momentu nie mogą oni rozpocząć gry, ale dostają oni karty po
+tym jak pierwszy gracz rozpoczął rozgrywkę i powinieneś pobrać z serwera informacje o tych kartach zanim dasz im wykonać ruch. Każdy kolejny ruch rozpoczyna się od wysłania id=9 i
+iKey[0]=1, co oznacza, ze dany klient ma teraz czas na decyzje czy chce pobrać kartę, podwoić (uwaga tylko w pierwszej rundzie(!),  potem serwer nie odpowiada na zapytanie o
+podwojenie w rundzie innej niż pierwsza) albo spasować. Gra się kończy w momencie kiedy serwer przesyła do wszystkich klientów ID =7 i iKey[0]=3. Wiem, że dopiero to rozszerzyłem,
+ale postanowiłem ulepszyć mechanizm gry, byś nie musiał się domyślać kiedy i co należy pobierać info z serwera. Z chęcią rozpatrzę kolejne problemy jeśli jakieś widzisz.
+
 
 Pozdro.
 
