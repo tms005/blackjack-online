@@ -1,6 +1,6 @@
 TO DO :
 
-#1  Wysylanie wiadomosci w kliencie z kolejki działa błędnie! Czek aut to co wstawiłem, nadchodzące do serwera dane są bez sensu.
+#1  Wysylanie wiadomosci w kliencie z kolejki działa błędnie! Czek aut to co wstawiłem w download, nadchodzące do serwera dane są bez sensu.
     Ten serwer prawidłowo przetwarza dane przesyłane od wielu klientów, problem w tym, że dane nie mają sensu.
 
 #1  Przerabiamy winapi na wyglądające porządnie. 
