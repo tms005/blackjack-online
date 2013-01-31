@@ -7,11 +7,23 @@ TO DO :
 
 #3  case 8
 
+#0 (!)
+void czyscBuffer(Buffer tempbuff)
+{
+    tempbuff.ID=0;
+    tempbuff.ID_USR=0;
+    for(int i=0;i<16;i++) tempbuff.iKey[i]=0;
+    memset(tempbuff.cChat,0,256);
+}
+
+http://www.youtube.com/watch?v=6QhZTfNaiHA
+
+Nauka C poszła kurwa w las.
 
 DONE:
 
-Określenie czy da się utworzyć sprawnie działające zmienne globalne dla klienta. 
+>Określenie czy da się utworzyć sprawnie działające zmienne globalne dla klienta. 
 
-Jesli #1 tak, to zastepujemy funkcje czekaj funkcją generującą dane do wyłania na serwer oraz regulującą wysylanie wiadomości. Jednocześnie w switch od 10 wysyla sie te informacje
+>Jesli ^ tak, to zastepujemy funkcje czekaj funkcją generującą dane do wyłania na serwer oraz regulującą wysylanie wiadomości. Jednocześnie w switch od 10 wysyla sie te informacje
 
-SIR! YES SIR!-> "Karol musi przestac sie opierdalac" http://media-cache0.pinterest.com/upload/268316090269477293_AEfZV303_b.jpg 
+>SIR! YES SIR!-> "Karol musi przestac sie opierdalac" http://media-cache0.pinterest.com/upload/268316090269477293_AEfZV303_b.jpg 
