@@ -16,9 +16,20 @@ void czyscBuffer(Buffer tempbuff)
     memset(tempbuff.cChat,0,256);
 }
 
+
+         case WM_CLOSE:
+         {
+            czyscBuffer(&sbufferStol);
+            sbufferStol.ID=6;
+            pack(&sbufferStol,pakiet);
+            kolejka.push(pakiet);
+            PostQuitMessage(0);
+            break;
+         }
+
 http://www.youtube.com/watch?v=6QhZTfNaiHA
 
-Nauka C poszła kurwa w las.
+Nauka C i WinAPI poszła kurwa w las.
 
 DONE:
 
